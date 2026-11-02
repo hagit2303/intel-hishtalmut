@@ -7,7 +7,8 @@
 **https://hagit2303.github.io/intel-hishtalmut/** · דף בית עם שלוש המשימות וכל החומרים.
 - משימה 1: https://hagit2303.github.io/intel-hishtalmut/api/
 - משימה 2 (לפתוח בטלפון): https://hagit2303.github.io/intel-hishtalmut/compass/
-- אפליקציית המזון (ערך קלורי + מצלמה): https://hagit2303.github.io/intel-hishtalmut/food/ · [פרטים](אפליקציית-מזון/README.md)
+- אפליקציית המזון (ערך קלורי + מצלמה): https://hagit2303.github.io/intel-hishtalmut/food/ · [פרטים](אפליקציית-מזון/README.md) · [אפיון](אפליקציית-מזון/docs/spec.md)
+- הסיפור של המשימה: https://hagit2303.github.io/intel-hishtalmut/story/
 - כל הקבצים: https://github.com/hagit2303/intel-hishtalmut
 
 **עדכון האתר אחרי שינוי בתיקייה:** מבקשים מהבינה "תעדכן את אתר אינטל בגיטהאב".
