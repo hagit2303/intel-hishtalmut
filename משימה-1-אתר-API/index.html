@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>האם להשקות היום?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F7FA;--ink:#13233A;--mut:#5E6E82;--rich:#D7263D;--poor:#2457C5;--card:#FFFFFF;--line:#DCE3EA;--ok:#1E7B4D;--okbg:#E6F4EC}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Assistant,Arial,sans-serif;font-size:18px;line-height:1.5}
+main{max-width:760px;margin:0 auto;padding:24px 16px 48px}
+.eyebrow{color:var(--rich);font-weight:800;font-size:14px;letter-spacing:.02em}
+h1{font-size:clamp(34px,8vw,56px);font-weight:800;line-height:1.1;margin:4px 0 8px}
+h2{font-size:24px;font-weight:800;margin:0 0 12px}
+.lead{color:var(--mut);margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin:16px 0}
+.place{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+select,button{font:inherit;font-size:17px;border-radius:10px;border:1px solid var(--line);padding:8px 14px;background:#fff;color:var(--ink)}
+button{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600;cursor:pointer}
+button.ghost{background:#fff;color:var(--ink)}
+#verdict{border-width:2px}
+#verdict .big{font-size:clamp(26px,6vw,38px);font-weight:800;line-height:1.2;margin:0 0 6px}
+#verdict.water{border-color:var(--rich)} #verdict.water .big{color:var(--rich)}
+#verdict.wait{border-color:var(--poor)} #verdict.wait .big{color:var(--poor)}
+#verdict.rain{border-color:var(--poor)} #verdict.rain .big{color:var(--poor)}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.num{border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.num b{display:block;font-size:26px;font-weight:800}
+.num span{font-size:14px;color:var(--mut)}
+.in{color:var(--poor)} .out{color:var(--rich)}
+.legend{display:flex;gap:16px;font-size:15px;color:var(--mut);margin-bottom:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-left:6px;vertical-align:-1px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end}
+.day{text-align:center;font-size:13px;color:var(--mut)}
+.bars{height:140px;display:flex;gap:3px;align-items:flex-end;justify-content:center;border-bottom:1px solid var(--line)}
+.bar{width:40%;border-radius:4px 4px 0 0;min-height:2px}
+.bar.r{background:var(--poor)} .bar.e{background:var(--rich)}
+.day.today{color:var(--ink);font-weight:800}
+.day.future .bar{opacity:.45}
+.v{font-size:12px;line-height:1.2;margin-top:4px}
+.note{font-size:15px;color:var(--mut)}
+.err{background:#FDECEE;border-color:var(--rich)}
+details summary{cursor:pointer;font-weight:600}
+footer{font-size:14px;color:var(--mut);margin-top:28px}
+a{color:var(--poor)}
+@media (max-width:420px){.days{gap:3px}.v{font-size:11px}.nums{grid-template-columns:1fr 1fr 1fr}.num b{font-size:22px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">מאזן מים בחלקה · נתונים חיים</div>
+  <h1>האם להשקות היום?</h1>
+  <p class="lead">כמה מים נכנסו לקרקע בגשם, וכמה מים יצאו ממנה באידוי ובדיות של הצמחים. ההשוואה בין השניים היא בסיס להחלטה על השקיה.</p>
+
+  <div class="card place">
+    <label for="loc">חלקה:</label>
+    <select id="loc">
+      <option value="32.135,34.834">הכפר הירוק</option>
+      <option value="32.794,34.989">חיפה</option>
+      <option value="31.252,34.791">באר שבע</option>
+      <option value="33.207,35.570">קריית שמונה</option>
+      <option value="29.557,34.952">אילת</option>
+    </select>
+    <button class="ghost" id="me" type="button">📍 המיקום שלי</button>
+  </div>
+
+  <section id="verdict" class="card" aria-live="polite"><p class="big">טוען נתונים…</p></section>
+
+  <section class="card">
+    <h2>שבוע של מים: נכנס מול יוצא</h2>
+    <div class="legend"><span><i style="background:var(--poor)"></i>גשם (מ״מ)</span><span><i style="background:var(--rich)"></i>אידוי-דיות ET₀ (מ״מ)</span></div>
+    <div class="days" id="chart"></div>
+    <p class="note">שלושת הימים הראשונים: נתונים שנמדדו ועובדו במודל. היום והימים הבאים: תחזית (בצבע חלש).</p>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>איך מחושבת ההמלצה?</summary>
+      <ul>
+        <li><b>גשם</b>: כמות המים שירדה (או צפויה לרדת), במילימטרים. מ״מ אחד = ליטר אחד על כל מ״ר.</li>
+        <li><b>אידוי-דיות ייחוס (ET₀)</b>: כמות המים שיוצאת ביום ממשטח דשא ייחוס, באידוי מהקרקע ובדיות מהעלים. הערך תלוי בקרינה, בטמפרטורה, בלחות ובמהירות הרוח.</li>
+        <li><b>גירעון מים</b> = סכום ET₀ פחות סכום הגשם בשלושת הימים האחרונים ובהיום.</li>
+        <li>צפוי גשם של 5 מ״מ ומעלה ביומיים הקרובים ← <b>לא להשקות</b>.</li>
+        <li>אחרת, גירעון של 10 מ״מ ומעלה ← <b>כדאי להשקות</b>. פחות מזה ← <b>אפשר לחכות</b>.</li>
+      </ul>
+      <p class="note">זהו כלל אצבע לימודי. צריכת המים של גידול מסוים שונה מ-ET₀ (מכפילים במקדם גידול), ותלויה גם בסוג הקרקע ובשלב הגדילה.</p>
+    </details>
+  </section>
+
+  <footer>
+    מקור הנתונים: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (שירות חינמי, בלי מפתח, רישיון CC BY 4.0). הנתונים הם תוצאת מודל מזג אוויר, לא מדידה בחלקה עצמה.<br>
+    משימה 1 בהשתלמות אינטל · חגית ברגמן
+  </footer>
+</main>
+<script>
+const HE_DAYS=['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'];
+const $=s=>document.querySelector(s);
+const r1=x=>Math.round(x*10)/10;
+
+async function load(lat,lon){
+  const v=$('#verdict'); v.className='card'; v.innerHTML='<p class="big">טוען נתונים…</p>'; $('#chart').innerHTML='';
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=precipitation_sum,precipitation_probability_max,et0_fao_evapotranspiration,temperature_2m_max&past_days=3&forecast_days=4&timezone=Asia%2FJerusalem`;
+  try{
+    const res=await fetch(url);
+    if(!res.ok) throw new Error(res.status);
+    const d=(await res.json()).daily;
+    render(d);
+  }catch(e){
+    v.className='card err';
+    v.innerHTML='<p class="big">השירות לא ענה</p><p>ייתכן שאין חיבור לרשת. <button type="button" id="retry">נסו שוב</button></p>';
+    $('#retry').onclick=()=>load(lat,lon);
+  }
+}
+
+function render(d){
+  const T=3; // אינדקס היום: 3 ימים קודמים לפניו
+  const rain=d.precipitation_sum.map(x=>x||0), et=d.et0_fao_evapotranspiration.map(x=>x||0);
+  const sum=(a,i,j)=>a.slice(i,j).reduce((s,x)=>s+x,0);
+  const rainPast=sum(rain,0,T+1), etPast=sum(et,0,T+1);
+  const deficit=etPast-rainPast;
+  const rainNext=sum(rain,T+1,T+3);
+  const v=$('#verdict');
+  let cls,big,why;
+  if(rainNext>=5){cls='rain';big='🌧️ לא להשקות. צפוי גשם';why=`ביומיים הקרובים צפויים ${r1(rainNext)} מ״מ גשם.`}
+  else if(deficit>=10){cls='water';big='💧 כדאי להשקות היום';why=`בארבעת הימים האחרונים יצאו מהקרקע ${r1(deficit)} מ״מ יותר ממה שנכנס בגשם.`}
+  else{cls='wait';big='🌱 אפשר לחכות';why=deficit>0?`הגירעון קטן (${r1(deficit)} מ״מ) ולא צפוי גשם משמעותי.`:`בארבעת הימים האחרונים ירד יותר גשם ממה שיצא באידוי-דיות.`}
+  v.className='card '+cls;
+  v.innerHTML=`<p class="big">${big}</p><p>${why}</p>
+   <div class="nums">
+    <div class="num"><b class="in">${r1(rainPast)}</b><span>גשם, 4 ימים (מ״מ)</span></div>
+    <div class="num"><b class="out">${r1(etPast)}</b><span>אידוי-דיות, 4 ימים (מ״מ)</span></div>
+    <div class="num"><b>${r1(Math.max(deficit,0))}</b><span>גירעון (מ״מ)</span></div>
+   </div>`;
+  const max=Math.max(1,...rain,...et);
+  $('#chart').innerHTML=d.time.map((t,i)=>{
+    const dt=new Date(t+'T12:00'); const lbl=i===T?'היום':HE_DAYS[dt.getDay()];
+    const c=i===T?'today':(i>T?'future':'');
+    return `<div class="day ${c}"><div class="bars"><div class="bar r" style="height:${rain[i]/max*100}%"></div><div class="bar e" style="height:${et[i]/max*100}%"></div></div>
+      <div class="v"><span class="in">${r1(rain[i])}</span> · <span class="out">${r1(et[i])}</span></div>${lbl}</div>`;
+  }).join('');
+}
+
+$('#loc').onchange=e=>{const [a,b]=e.target.value.split(',');load(a,b)};
+$('#me').onclick=()=>{
+  if(!navigator.geolocation){alert('הדפדפן לא תומך במיקום');return}
+  navigator.geolocation.getCurrentPosition(p=>load(p.coords.latitude.toFixed(3),p.coords.longitude.toFixed(3)),()=>alert('לא התקבלה הרשאה למיקום'));
+};
+load(32.135,34.834);
+</script>
+</body>
+</html>
