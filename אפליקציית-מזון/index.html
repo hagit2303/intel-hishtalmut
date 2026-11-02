@@ -266,6 +266,7 @@
         /* תוספות: סגנון אטלס */
         button, select, input { font-family: inherit; }
         header { border-bottom: 5px solid var(--rich); }
+        .animal-grid { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important; }
         .feed-head { background: #EEF3FC; padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
         .badge { background: var(--primary-dark); color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 0.82rem; font-weight: 800; }
         .nutrient-box.kcal { border: 2px solid var(--rich); }
@@ -278,6 +279,8 @@
         table.cmp td { padding: 10px; border: 1px solid #ccc; vertical-align: top; }
         .energy-card.net { border-color: var(--rich); }
         .upload-btn { background: var(--mut); color: #fff; padding: 10px 14px; border-radius: 9px; cursor: pointer; font-weight: bold; }
+        .unit-links { padding-right: 18px; line-height: 2; }
+        .unit-links a { color: var(--poor); font-weight: 600; }
         .foot { font-size: 0.85rem; color: var(--mut); margin-top: 1.5rem; }
     </style>
 </head>
@@ -285,13 +288,13 @@
 
 <header>
     <h1>🐄 מה נותנים לאכול ברפת ובלול?</h1>
-    <p>סימולטור הזנה ומערכות עיכול: בוחרים בעל חיים, בודקים מזון ורואים את הערך הקלורי ואת מסלול הפירוק</p>
+    <p>פרה, כבשה, סוס ותרנגולת: בוחרים או מצלמים מזון, ורואים ערך קלורי, התאמה ומסלול פירוק</p>
 </header>
 
 <div class="container">
 
     <div class="nav-tabs">
-        <button class="tab-btn active" id="btnTabSim" onclick="switchTab('sim')">🌾 סימולטור הזנה (רפת / דיר / לול)</button>
+        <button class="tab-btn active" id="btnTabSim" onclick="switchTab('sim')">🌾 סימולטור הזנה (רפת / דיר / אורווה / לול)</button>
         <button class="tab-btn" id="btnTabBagrut" onclick="switchTab('bagrut')">🎓 דף חזרה: מפל האנרגיה וסוגי מזון</button>
     </div>
 
@@ -314,6 +317,11 @@
                     <strong>כבשה (צאן)</strong>
                     <small>מעלת גרה · קיבה בת 4 חלקים</small>
                 </div>
+                <div class="animal-card" id="card-horse" onclick="selectAnimal('horse')">
+                    <span class="emoji">🐎</span>
+                    <strong>סוס</strong>
+                    <small>קיבה אחת · תסיסה במעי העיוור</small>
+                </div>
                 <div class="animal-card" id="card-chicken" onclick="selectAnimal('chicken')">
                     <span class="emoji">🐔</span>
                     <strong>תרנגולת (עופות)</strong>
@@ -331,7 +339,7 @@
         <div class="card">
             <span class="step-badge">שלב 2 · בודקים את המזון</span>
             <h2>מה מושם באבוס? (בוחרים, מקלידים או מצלמים)</h2>
-            <p style="font-size:0.92rem; margin-top:0;">בחרו מזון מהרשימה. אפשר גם להקליד כל מזון אחר: הוא נשלף ממאגר המזון של משרד החקלאות האמריקאי (USDA). במאגר הזה מזונות של בני אדם, והחיפוש עובד בעיקר באנגלית (למשל <strong>oats</strong>, <strong>barley</strong>, <strong>apple</strong>).</p>
+            <p style="font-size:0.92rem; margin-top:0;">בחרו מזון מהרשימה, כתבו את סוג המזון בשדה, או צלמו. מזון שאינו ברשימה נשלף ממאגר המזון של משרד החקלאות האמריקאי (USDA), שבו מזונות של בני אדם.</p>
 
             <div class="chips">
                 <span class="chip" onclick="quickSelect('חציר אספסת')">🌿 חציר אספסת (גס)</span>
@@ -343,17 +351,21 @@
                 <span class="chip" onclick="quickSelect('תערובת מטילות')">🥚 תערובת מטילות (מרוכז + סידן)</span>
             </div>
 
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-                <input type="text" id="foodInput" placeholder="מזון אחר (באנגלית): oats, wheat bran, apple..." style="flex:1; margin-bottom:0;" onkeydown="if(event.key==='Enter')searchFood()">
+            <label for="foodInput" style="display:block; margin-top:12px;"><strong>✍️ כתבו את סוג המזון:</strong></label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+                <input type="text" id="foodInput" list="foodList" placeholder="למשל: שיבולת שועל, תפוח, גזר, סובין חיטה" style="flex:1; min-width:200px; margin-bottom:0;" onkeydown="if(event.key==='Enter')searchFood()">
+                <datalist id="foodList"></datalist>
                 <button onclick="searchFood()">🔍 בדיקה</button>
-                <button class="camera-btn" onclick="toggleCamera()">📷 צילום המזון</button>
+                <button class="camera-btn" onclick="toggleCamera()">📷 צלמו וזהו</button>
             </div>
 
             <div id="cameraArea">
+                <p class="source" style="margin-top:0;">מצלמים מזון (פרי, ירק, חציר, תירס…) או בעל חיים. מודל בינה מלאכותית מזהה מה בתמונה, והאפליקציה מביאה את הערך הקלורי. המודל רץ בתוך הטלפון, והתמונה לא נשלחת לשום מקום.</p>
                 <video id="video" autoplay playsinline muted></video>
-                <canvas id="canvas" width="200" height="200" style="display:none;"></canvas>
+                <canvas id="canvas" width="224" height="224" style="display:none;"></canvas>
+                <div id="aiStatus" class="source"></div>
                 <div style="margin-top:10px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
-                    <button onclick="analyzeCameraFeed()">📸 צלמו ובדקו את הצבע</button>
+                    <button onclick="analyzeCameraFeed()">📸 צלמו וזהו</button>
                     <label class="upload-btn">
                         📁 או העלו תמונה
                         <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="analyzeUploadedImage(event)">
@@ -391,6 +403,37 @@
             <h2 id="digestionTitle">מסלול פירוק המזון במערכת העיכול</h2>
             <p style="font-size:0.92rem; margin-top:0;">איפה מתפרק כל רכיב של המזון שבחרתם, ומה קורה בכל חלק:</p>
             <div id="digestivePathContainer" class="digestive-path"></div>
+        </div>
+
+        <!-- פרה מול סוס -->
+        <div class="card" id="cowVsHorse">
+            <span class="step-badge">השוואה</span>
+            <h2>🐄 פרה מול 🐎 סוס: איפה מתפרקת התאית?</h2>
+            <p style="margin-top:0;">גם הפרה וגם הסוס מפיקים אנרגיה ממזון עשיר בתאית, בעזרת מיקרואורגניזמים מפרקי תאית. ההבדל הוא <strong>איפה</strong> נמצא תא התסיסה: בפרה <strong>לפני</strong> המעי הדק, ובסוס <strong>אחריו</strong>.</p>
+            <div style="overflow-x:auto;">
+                <table class="cmp">
+                    <thead><tr><th></th><th>🐄 פרה (וגם כבשה)</th><th>🐎 סוס</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>איפה מתפרקת התאית</strong></td><td>בכרס, בתחילת מערכת העיכול, לפני הקיבה האמיתית והמעי הדק</td><td>במעי העיוור ובמעי הגס, אחרי המעי הדק</td></tr>
+                        <tr><td><strong>קיבה</strong></td><td>קיבה בת 4 חלקים: כרס, קיבת כוסות, קיבת עלים, קיבה אמיתית</td><td>קיבה אחת, קטנה יחסית</td></tr>
+                        <tr><td><strong>העלאת גרה</strong></td><td>כן: חלקיקים גסים עולים מהכרס לפה ונלעסים שוב</td><td>לא: כל הלעיסה מתבצעת לפני הבליעה</td></tr>
+                        <tr><td><strong>חומצות שומן נדיפות</strong></td><td>נספגות דרך דופן הכרס</td><td>נספגות דרך דופן המעי העיוור והמעי הגס</td></tr>
+                        <tr><td><strong>חלבון החיידקים</strong></td><td>ממשיך לקיבה האמיתית ולמעי הדק, מתעכל ונספג</td><td>נוצר אחרי המעי הדק, ולכן מופרש ברובו בצואה</td></tr>
+                        <tr><td><strong>סיכון מעודף מזון מרוכז</strong></td><td>החמצת כרס (אצידוזיס)</td><td>תסיסה מהירה במעי העיוור, קוליק (כאבי בטן)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="source">בבגרות: 2017, "באילו בעלי חיים מנת מזון עשירה בתאית משמשת מקור לאנרגיה?" (סוסים ומעלי גירה). 2022, "ציינו בעל חיים שיכול לעכל תאית והסבירו כיצד מערכת העיכול שלו מותאמת לכך" (פרה: מיקרואורגניזמים בכרס; סוס: מיקרואורגניזמים במעי העיוור).</p>
+        </div>
+
+        <!-- קישור ליחידות הקורס -->
+        <div class="card">
+            <h2>📚 ממשיכים ללמוד ביחידות של קורס החקלאות</h2>
+            <ul class="unit-links">
+                <li><a href="https://hagit2303.github.io/haklaut/unit2-digestion/" target="_blank" rel="noopener">🫃 מערכת העיכול</a> · <a href="https://hagit2303.github.io/haklaut/unit2-digestion/slides.html" target="_blank" rel="noopener">מצגת</a> · <a href="https://hagit2303.github.io/haklaut/unit2-digestion/practice.html" target="_blank" rel="noopener">תרגול</a></li>
+                <li><a href="https://hagit2303.github.io/haklaut/unit3-feeds/" target="_blank" rel="noopener">🌾 סוגי מזונות ומנת המזון</a> · <a href="https://hagit2303.github.io/haklaut/unit3-feeds/energy.html" target="_blank" rel="noopener">אנרגיה במזון</a></li>
+                <li><a href="https://hagit2303.github.io/haklaut/" target="_blank" rel="noopener">🏠 דף הבית של הקורס</a></li>
+            </ul>
         </div>
 
     </div>
@@ -465,6 +508,12 @@
                             <td>התסיסה מייצרת חומצות שומן נדיפות (מקור אנרגיה עיקרי) וחלבון מיקרוביאלי. היחס בין מזון גס למרוכז קובע את הסיכון להחמצת כרס.</td>
                         </tr>
                         <tr>
+                            <td><strong>סוס</strong></td>
+                            <td>קיבה אחת קטנה, מעי דק, <strong>מעי עיוור</strong> גדול מאוד ומעי גס. אינו מעלה גרה</td>
+                            <td><strong>במעי העיוור ובמעי הגס</strong>, אחרי המעי הדק, בידי מיקרואורגניזמים.</td>
+                            <td>בעיקר מזון גס במנות קטנות לאורך היום. עודף מזון מרוכז מגיע למעי העיוור ועלול לגרום לקוליק.</td>
+                        </tr>
+                        <tr>
                             <td><strong>תרנגולת</strong></td>
                             <td>מקור, <strong>זפק</strong>, קיבת מיצים (קיבה בלוטית), <strong>קורקבן</strong>, מעי דק, שני מעיים עיוורים</td>
                             <td>פירוק מועט מאוד, בעיקר במעיים העיוורים.</td>
@@ -473,13 +522,12 @@
                     </tbody>
                 </table>
             </div>
-            <p style="font-size:0.9rem; color:var(--mut); margin-bottom:0;">להשוואה בלבד: בסוס, שאינו מעלה גרה, התאית מותססת במעי העיוור ובמעי הגס, כלומר אחרי המעי הדק.</p>
         </div>
 
     </div>
 
     <footer class="foot">
-        נתוני המזונות ברשימה: ערכים טיפוסיים לחומר יבש, מעוגלים (טבלאות הרכב מזונות). מזון מוקלד: <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener">USDA FoodData Central</a> (מפתח הדגמה ציבורי, מוגבל במספר בקשות לשעה).<br>
+        נתוני המזונות ברשימה: ערכים טיפוסיים לחומר יבש, מעוגלים (טבלאות הרכב מזונות). מזון מוקלד: <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener">USDA FoodData Central</a> (מפתח הדגמה ציבורי, מוגבל במספר בקשות לשעה). זיהוי תמונה: מודל MobileNet (TensorFlow.js), שרץ בדפדפן.<br>
         גרסה ראשונה נבנתה ב-Gemini · נבדקה ותוקנה לדיוק מדעי · השתלמות אינטל · חגית ברגמן
     </footer>
 </div>
@@ -513,6 +561,17 @@
                 { id: 'lamb', producing: true, title: 'טלה בפיטום',
                   needs: 'מנה עתירת אנרגיה וחלבון (כ-16% חלבון), בעיקר מזון מרוכז, עם מעט מזון גס.',
                   why: 'קצב גדילה מהיר דורש אנרגיה וחלבון רבים. מעט מזון גס נחוץ לתפקוד תקין של הכרס.' }
+            ]
+        },
+        horse: {
+            name: 'סוס', ruminant: false, hindgut: true,
+            stages: [
+                { id: 'horse_light', producing: false, title: 'סוס בעבודה קלה / תחזוקה',
+                  needs: 'בעיקר מזון גס (חציר), במנות קטנות לאורך היום, וכ-10% חלבון.',
+                  why: 'קיבת הסוס קטנה, והתאית מותססת במעי העיוור ובמעי הגס, אחרי המעי הדק. מנות קטנות ותכופות של מזון גס שומרות על תסיסה יציבה ומקטינות את הסיכון לקוליק (כאבי בטן).' },
+                { id: 'horse_work', producing: true, title: 'סוס בעבודה מאומצת / סוסה מניקה',
+                  needs: 'בסיס של מזון גס, ותוספת מזון מרוכז (שעורה, שיבולת שועל) במנות קטנות. כ-12%–14% חלבון.',
+                  why: 'מזון גס לבדו אינו מספק את האנרגיה לעבודה מאומצת או לייצור חלב. עמילן רב בארוחה אחת לא מתעכל כולו במעי הדק, מגיע למעי העיוור ומותסס שם מהר, ועלול לגרום לקוליק.' }
             ]
         },
         chicken: {
@@ -564,12 +623,18 @@
         [['מטילות', 'תערובת'], 'תערובת מטילות']
     ];
 
+    // מזונות שאפשר לכתוב בעברית · התרגום לאנגלית לחיפוש במאגר USDA
+    // ערכי USDA (SR Legacy) למזונות שבמילון, ל-100 גרם מזון כפי שהוא · נשמרו באפליקציה, כך שאינם תלויים במגבלת הבקשות של ה-API
+    const usdaTable = {"בייגלה":{"d":"Snacks, pretzels, hard, plain, salted","kcal":384,"fiber":3.4,"protein":10,"carbs":80.4,"fat":2.9},"גלידה":{"d":"Ice creams, vanilla","fiber":0.7,"carbs":23.6,"kcal":207,"fat":11,"protein":3.5},"לימון":{"d":"Lemons, raw, without peel","protein":1.1,"fiber":2.8,"fat":0.3,"carbs":9.3,"kcal":29},"תות":{"d":"Strawberries, raw","fat":0.3,"fiber":2,"protein":0.7,"carbs":7.7,"kcal":32},"אבטיח":{"d":"Watermelon, raw","protein":0.6,"fiber":0.4,"fat":0.2,"carbs":7.6,"kcal":30},"תמר":{"d":"Dates, medjool","fat":0.2,"protein":1.8,"fiber":6.7,"carbs":75,"kcal":277},"מלפפון":{"d":"Cucumber, with peel, raw","carbs":3.6,"kcal":15,"fat":0.1,"fiber":0.5,"protein":0.7},"דלעת":{"d":"Pumpkin, raw","carbs":6.5,"fiber":0.5,"kcal":26,"fat":0.1,"protein":1},"בטטה":{"d":"Sweet potato, raw, unprepared","fiber":3,"carbs":20.1,"kcal":86,"fat":0.1,"protein":1.6},"אורז":{"d":"Rice, white, long-grain, regular, raw, enriched","fat":0.7,"carbs":80,"kcal":365,"protein":7.1,"fiber":1.3},"חיטה":{"d":"Wheat, hard red winter","fiber":12.2,"protein":12.6,"fat":1.5,"carbs":71.2,"kcal":327},"מלון":{"d":"Melons, cantaloupe, raw","carbs":8.2,"kcal":34,"fiber":0.9,"protein":0.8,"fat":0.2},"תפוז":{"d":"Oranges, raw, all commercial varieties","fat":0.1,"carbs":11.8,"kcal":47,"fiber":2.4,"protein":0.9},"אגס":{"d":"Pears, raw","fat":0.1,"carbs":15.2,"kcal":57,"protein":0.4,"fiber":3.1},"אננס":{"d":"Pineapple, raw, all varieties","protein":0.5,"fat":0.1,"fiber":1.4,"carbs":13.1,"kcal":50},"רימון":{"d":"Pomegranates, raw","protein":1.7,"fiber":4,"fat":1.2,"carbs":18.7,"kcal":83},"סלק":{"d":"Beets, raw","fiber":2.8,"carbs":9.6,"kcal":43,"fat":0.2,"protein":1.6},"ארטישוק":{"d":"Artichokes, (globe or french), raw","kcal":47,"carbs":10.5,"fat":0.2,"protein":3.3,"fiber":5.4},"חסה":{"d":"Lettuce, cos or romaine, raw","carbs":3.3,"kcal":17,"fat":0.3,"fiber":2.1,"protein":1.2},"פטרייה":{"d":"Mushrooms, white, raw","fiber":1,"fat":0.3,"protein":3.1,"carbs":3.3,"kcal":22},"קישוא":{"d":"Squash, summer, zucchini, includes skin, raw","fat":0.3,"carbs":3.1,"kcal":17,"fiber":1,"protein":1.2},"דלעת ערמונים":{"d":"Squash, winter, butternut, raw","fiber":2,"carbs":11.7,"kcal":45,"fat":0.1,"protein":1},"דלעת ספגטי":{"d":"Squash, winter, spaghetti, raw","fiber":1.5,"kcal":31,"protein":0.6,"fat":0.6,"carbs":6.9},"דבש":{"d":"Honey","protein":0.3,"fiber":0.2,"fat":0,"carbs":82.4,"kcal":304},"סוכר":{"d":"Sugars, granulated","protein":0,"fat":0,"kcal":387,"carbs":100,"fiber":0},"שיבולת שועל":{"d":"Oats","fiber":10.6,"protein":16.9,"fat":6.9,"carbs":66.3,"kcal":389},"סורגום":{"d":"Sorghum grain","protein":10.6,"fiber":6.7,"fat":3.5,"carbs":72.1,"kcal":329},"סובין חיטה":{"d":"Wheat bran, crude","fat":4.3,"carbs":64.5,"kcal":216,"protein":15.6,"fiber":42.8},"פסטה":{"d":"Pasta, dry, enriched","carbs":74.7,"kcal":371,"fat":1.5,"fiber":3.2,"protein":13},"כרוב":{"d":"Cabbage, raw","fat":0.1,"carbs":5.8,"kcal":25,"protein":1.3,"fiber":2.5},"כרובית":{"d":"Cauliflower, raw","carbs":5,"kcal":25,"protein":1.9,"fiber":2,"fat":0.3},"תירס מתוק":{"d":"Corn, sweet, yellow, raw","fiber":2,"protein":3.3,"fat":1.4,"carbs":18.7,"kcal":86},"תפוח אדמה":{"d":"Potatoes, flesh and skin, raw","fat":0.1,"kcal":77,"protein":2.1,"fiber":2.1,"carbs":17.5},"פירה":{"d":"Potatoes, mashed, home-prepared, whole milk and margarine added","fiber":1.5,"fat":4.2,"kcal":113,"carbs":16.9,"protein":2},"פלפל":{"d":"Peppers, sweet, red, raw","fiber":2.1,"kcal":26,"carbs":6,"protein":1,"fat":0.3},"אגוזי מלך":{"d":"Nuts, walnuts, english","carbs":13.7,"kcal":654,"protein":15.2,"fiber":6.7,"fat":65.2},"שעורה מלאה":{"d":"Barley, hulled","fiber":17.3,"protein":12.5,"fat":2.3,"carbs":73.5,"kcal":354},"פיצה":{"d":"Pizza, cheese topping, regular crust, frozen, cooked","fat":12.3,"protein":10.4,"fiber":2.2,"carbs":29,"kcal":268},"ברוקולי":{"d":"Broccoli, raw","carbs":6.6,"kcal":34,"fat":0.4,"protein":2.8,"fiber":2.6},"גזר":{"d":"Carrots, raw","protein":0.9,"fat":0.2,"carbs":9.6,"kcal":41,"fiber":2.8},"אפונה":{"d":"Peas, green, raw","carbs":14.5,"kcal":81,"protein":5.4,"fat":0.4,"fiber":5.7},"עגבנייה":{"d":"Tomatoes, red, ripe, raw, year round average","carbs":3.9,"kcal":18,"fat":0.2,"fiber":1.2,"protein":0.9},"גרעיני חמנייה":{"d":"Seeds, sunflower seed kernels, dried","protein":20.8,"fiber":8.6,"fat":51.5,"carbs":20,"kcal":584},"שקדים":{"d":"Nuts, almonds","protein":21.2,"fiber":12.5,"fat":49.9,"carbs":21.6,"kcal":579},"המבורגר":{"d":"Fast foods, cheeseburger; single, regular patty; plain","protein":16.5,"fiber":2,"fat":14.7,"carbs":28,"kcal":308},"גבינה צהובה":{"d":"Cheese, cheddar, sharp, sliced","protein":24.3,"fiber":0,"fat":33.8,"carbs":2.1,"kcal":410},"חלב":{"d":"Milk, whole, 3.25% milkfat, with added vitamin D","fat":3.3,"carbs":4.8,"kcal":61,"fiber":0,"protein":3.2},"יוגורט":{"d":"Yogurt, plain, whole milk","kcal":61,"protein":3.5,"fiber":0,"fat":3.3,"carbs":4.7},"ביצה":{"d":"Egg, whole, raw, fresh","kcal":143,"protein":12.6,"fat":9.5,"carbs":0.7,"fiber":0},"חזה עוף":{"d":"Chicken, broilers or fryers, breast, skinless, boneless, meat only, with added solution, raw","fiber":0,"carbs":0,"kcal":108,"fat":3,"protein":20.3},"תפוח":{"d":"Apples, raw, with skin","carbs":13.8,"kcal":52,"fat":0.2,"fiber":2.4,"protein":0.3},"אבוקדו":{"d":"Avocados, raw, all commercial varieties","protein":2,"fiber":6.7,"fat":14.7,"carbs":8.5,"kcal":160},"בשר בקר":{"d":"Beef, ground, 85% lean meat / 15% fat, raw","fiber":0,"fat":15,"protein":18.6,"carbs":0,"kcal":215},"עדשים":{"d":"Lentils, raw","fat":1.1,"fiber":10.7,"protein":24.6,"carbs":63.4,"kcal":352},"בוטנים":{"d":"Peanuts, all types, raw","fiber":8.5,"protein":25.8,"fat":49.2,"carbs":16.1,"kcal":567},"לחם צרפתי":{"d":"Bread, french or vienna (includes sourdough)","protein":10.8,"fiber":2.2,"fat":2.4,"carbs":51.9,"kcal":272},"לחם":{"d":"Bread, white, commercially prepared, low sodium, no salt","carbs":49.6,"kcal":267,"fat":3.6,"protein":8.2,"fiber":2.3},"תאנה":{"d":"Figs, raw","fat":0.3,"carbs":19.2,"kcal":74,"protein":0.8,"fiber":2.9},"חומוס":{"d":"Chickpeas (garbanzo beans, bengal gram), mature seeds, raw","carbs":63,"kcal":378,"fiber":12.2,"protein":20.5,"fat":6},"נקניקייה":{"d":"Frankfurter, beef, unheated","fat":28.1,"carbs":3,"kcal":315,"protein":11.7,"fiber":0},"בננה":{"d":"Bananas, raw","carbs":22.8,"kcal":89,"fiber":2.6,"protein":1.1,"fat":0.3},"ענבים":{"d":"Grapes, red or green (European type, such as Thompson seedless), raw","fat":0.2,"protein":0.7,"fiber":0.9,"carbs":18.1,"kcal":69},"בייגל":{"d":"Bagels, plain, enriched, with calcium propionate (includes onion, poppy, sesame)","protein":10.6,"fiber":1.6,"fat":1.3,"carbs":52.4,"kcal":264},"דג סלמון":{"d":"Fish, salmon, Atlantic, farmed, raw","kcal":208,"fat":13.4,"protein":20.4,"fiber":0,"carbs":0},"שעועית":{"d":"Beans, kidney, all types, mature seeds, raw","carbs":60,"kcal":333,"fat":0.8,"protein":23.6,"fiber":24.9}};
+
     let currentAnimal = 'cow';
     let currentStage = 'high_milk';
     let currentFeed = null;
     const stageObj = () => animalsData[currentAnimal].stages.find(s => s.id === currentStage);
 
     window.onload = function () {
+        document.getElementById('foodList').innerHTML =
+            [...Object.keys(feeds), ...Object.keys(usdaTable)].map(n => `<option value="${n}">`).join('');
         selectAnimal('cow');
         quickSelect('חציר אספסת');
     };
@@ -583,7 +648,7 @@
 
     function selectAnimal(key) {
         currentAnimal = key;
-        ['cow', 'sheep', 'chicken'].forEach(k => document.getElementById('card-' + k).classList.toggle('selected', k === key));
+        ['cow', 'sheep', 'horse', 'chicken'].forEach(k => document.getElementById('card-' + k).classList.toggle('selected', k === key));
         const sel = document.getElementById('stageSelect');
         sel.innerHTML = '';
         animalsData[key].stages.forEach(st => {
@@ -602,7 +667,6 @@
     }
 
     function quickSelect(name) {
-        document.getElementById('foodInput').value = '';
         showFeed({ title: name, ...feeds[name], ...feeds[name].v, source: 'list' });
     }
 
@@ -617,19 +681,39 @@
         const raw = document.getElementById('foodInput').value.trim();
         if (!raw) return;
         showMsg('');
+        if (usdaTable[raw]) return showUsdaRow(raw);
         for (const [words, key] of aliases) {
             if (words.some(w => raw.includes(w))) return quickSelect(key);
         }
+        const he = Object.keys(usdaTable).sort((x, y) => y.length - x.length).find(k => raw.includes(k));
+        if (he) return showUsdaRow(he);
+        if (/[֐-׿]/.test(raw)) {
+            showMsg(`"${raw}" עדיין לא במילון של האפליקציה. בחרו מזון מהרשימה שנפתחת בשדה, או כתבו באנגלית (למשל oats, apple).`);
+            return;
+        }
+        return searchUSDA(raw, raw);
+    }
+
+    function showUsdaRow(he) {
+        const r = usdaTable[he];
+        document.getElementById("foodInput").value = he;
+        showFeed({ title: `${he} (${r.d})`, category: "מזון מהמאגר האמריקאי (USDA)",
+            explanation: "נתונים ממאגר מזון לבני אדם, ל-100 גרם מזון כפי שהוא (כולל המים), ולא לחומר יבש. הערך הקלורי במאגר הוא האנרגיה הזמינה לאדם.",
+            kcal: r.kcal, protein: r.protein, fiber: r.fiber, carbs: r.carbs, fat: r.fat, source: "usda" });
+    }
+
+    async function searchUSDA(query, shown) {
+        const raw = shown;
         document.getElementById('loadingText').style.display = 'block';
         try {
-            const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(raw)}&pageSize=1&dataType=Foundation,SR%20Legacy&api_key=DEMO_KEY`;
+            const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(query)}&pageSize=1&dataType=Foundation,SR%20Legacy&api_key=DEMO_KEY`;
             const res = await fetch(url);
             if (res.status === 429) throw new Error('limit');
             if (!res.ok) throw new Error('http');
             const data = await res.json();
             const f = (data.foods || [])[0];
             if (!f) {
-                showMsg(`לא נמצא "${raw}" במאגר. נסו לכתוב באנגלית (למשל oats, wheat, apple).`);
+                showMsg(`לא נמצא "${raw}" במאגר. נסו מזון אחר מהרשימה שנפתחת בשדה.`);
                 return;
             }
             const get = (...ids) => {
@@ -644,7 +728,7 @@
                 category: 'מזון מהמאגר האמריקאי (USDA)',
                 explanation: 'נתונים ממאגר מזון לבני אדם, ל-100 גרם מזון כפי שהוא (כולל המים), ולא לחומר יבש. הערך הקלורי במאגר הוא האנרגיה הזמינה לאדם.',
                 kcal: get(1008, 2047, 2048), protein: get(1003), fiber: get(1079), carbs: get(1005), fat: get(1004),
-                source: 'usda'
+                source: 'usda-live'
             });
         } catch (e) {
             showMsg(e.message === 'limit'
@@ -664,11 +748,11 @@
         ['Kcal', 'Protein', 'Fiber', 'Carbs', 'Fat'].forEach(k => {
             document.getElementById('val' + k).innerText = feed[k.toLowerCase()];
         });
-        const usda = feed.source === 'usda';
+        const usda = feed.source !== 'list';
         document.getElementById('lblKcal').innerText = usda ? 'ערך קלורי (לאדם)' : 'ערך קלורי (אנרגיה מטבולית)';
         document.getElementById('lblFiber').innerText = usda ? 'סיבים תזונתיים' : 'סיבים גולמיים';
         document.getElementById('valSource').innerHTML = usda
-            ? '📡 מקור: USDA FoodData Central, נתונים חיים. ל-100 גרם מזון כפי שהוא.'
+            ? (feed.source === 'usda-live' ? '📡 מקור: USDA FoodData Central, נתונים חיים מה-API. ל-100 גרם מזון כפי שהוא.' : '📡 מקור: USDA FoodData Central (SR Legacy). ל-100 גרם מזון כפי שהוא.')
             : '📋 מקור: ערכים טיפוסיים מעוגלים, ל-100 גרם חומר יבש. הערך הקלורי הוא אנרגיה מטבולית משוערת (בבקר וצאן; בתערובת מטילות: בעופות).';
         renderEvaluationAndDigestion();
     }
@@ -699,6 +783,19 @@
                 { organ: '3. קיבת עלים (המסס)', desc: 'ספיגת מים ומלחים מהתוכן, לפני המעבר לקיבה האמיתית.' },
                 { organ: '4. קיבה אמיתית (קיבת המיצים) ומעי דק', desc: 'בקיבה האמיתית מופרשות חומצה מלחית ופפסין, ומתחיל עיכול החלבונים, כולל חלבון החיידקים שהגיעו מהכרס. במעי הדק נספגים לדם חומצות אמינו, שומנים ומעט גלוקוז.' }
             ];
+        } else if (a.hindgut) {
+            digTitle.innerText = `🐎 מסלול הפירוק של "${f.title}" במערכת העיכול של הסוס (תסיסה במעי העיוור)`;
+            verdict = isRoughage
+                ? `✅ <strong>מזון גס, מתאים לסוס.</strong> הסוס אינו מעלה גרה, והתאית (${f.fiber}%) מותססת בידי מיקרואורגניזמים במעי העיוור ובמעי הגס. ניצול התאית בסוס נמוך בדרך כלל מזה של הפרה, כי התסיסה מתרחשת אחרי המעי הדק.`
+                : `⚠️ <strong>מזון מרוכז לסוס:</strong> מתאים רק במנות קטנות, כתוספת${s.producing ? ' לסוס בעבודה מאומצת או לסוסה מניקה' : ''}. עמילן רב (${f.carbs}%) שלא מתעכל במעי הדק מגיע למעי העיוור, מותסס שם מהר ועלול לגרום לקוליק.`;
+            steps = [
+                { organ: '1. פה: לעיסה יסודית', desc: 'הסוס אינו מעלה גרה, ולכן כל הלעיסה מתבצעת בפעם אחת, לפני הבליעה.' },
+                { organ: '2. קיבה אחת, קטנה', desc: `קיבה חומצית: חומצה מלחית ופפסין. מתחיל עיכול החלבונים (${f.protein}%).` },
+                { organ: '3. מעי דק', desc: `אנזימים של הסוס עצמו מפרקים עמילן (${f.carbs}%), חלבונים ושומנים, ותוצרי הפירוק נספגים לדם. התאית עוברת דרכו כמעט ללא פירוק.` },
+                { organ: '4. מעי עיוור ומעי גס: תסיסה', desc: isRoughage
+                    ? `במעי העיוור, הגדול מאוד, חיידקים וחד-תאיים מפרקים את <strong>התאית (${f.fiber}%)</strong> בעזרת צלולז לחומצות שומן נדיפות, הנספגות לדם ומשמשות מקור אנרגיה. חלבון החיידקים שנוצר כאן מופרש ברובו בצואה, כי מעי העיוור נמצא אחרי המעי הדק.`
+                    : `שאריות שלא התעכלו במעי הדק מותססות כאן. עודף עמילן גורם לתסיסה מהירה ועלול לגרום לקוליק.` }
+            ];
         } else {
             digTitle.innerText = `🐔 מסלול הפירוק של "${f.title}" במערכת העיכול של התרנגולת`;
             if (isRoughage) {
@@ -725,10 +822,34 @@
             </div>`).join('');
     }
 
-    // מצלמת הטלפון: בדיקת הצבע הממוצע במרכז התמונה (ניחוש בלבד, לא זיהוי)
+    // זיהוי תמונה: מודל MobileNet (TensorFlow.js) שרץ בתוך הדפדפן. מזהה כ-1,000 סוגי עצמים, בהם פירות, ירקות, חציר, תירס ובעלי חיים
+    const AI_ANIMALS = { 'ox': 'cow', 'ram': 'sheep', 'bighorn': 'sheep', 'sorrel': 'horse', 'hen': 'chicken', 'cock': 'chicken' };
+    const AI_FEEDS = { 'hay': 'חציר אספסת', 'corn': 'גרעיני תירס', 'ear': 'גרעיני תירס' };
+    const AI_FOODS = { banana: "בננה", "Granny Smith": "תפוח", orange: "תפוז", lemon: "לימון", strawberry: "תות", pineapple: "אננס", pomegranate: "רימון", fig: "תאנה", broccoli: "ברוקולי", cauliflower: "כרובית", "head cabbage": "כרוב", cucumber: "מלפפון", zucchini: "קישוא", "bell pepper": "פלפל", mushroom: "פטרייה", artichoke: "ארטישוק", "acorn squash": "דלעת", "butternut squash": "דלעת ערמונים", "spaghetti squash": "דלעת ספגטי", "French loaf": "לחם צרפתי", bagel: "בייגל", pretzel: "בייגלה", pizza: "פיצה", cheeseburger: "המבורגר", hotdog: "נקניקייה", "ice cream": "גלידה", "mashed potato": "פירה" };
+    const HE_ANIMAL = { cow: 'פרה', sheep: 'כבשה', horse: 'סוס', chicken: 'תרנגולת' };
+    let aiModel = null, aiLoading = null;
+
+    function loadScript(src) {
+        return new Promise((ok, bad) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = bad; document.head.appendChild(s); });
+    }
+    function aiStatus(t) { document.getElementById('aiStatus').innerHTML = t; }
+    function getModel() {
+        if (aiModel) return Promise.resolve(aiModel);
+        if (!aiLoading) {
+            aiStatus('⏳ טוען את מודל הזיהוי (בפעם הראשונה זה לוקח כמה שניות)…');
+            aiLoading = loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js')
+                .then(() => loadScript('https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js'))
+                .then(() => mobilenet.load({ version: 2, alpha: 1.0 }))
+                .then(m => { aiModel = m; aiStatus('🤖 מודל הזיהוי מוכן.'); return m; })
+                .catch(e => { aiLoading = null; aiStatus('⚠️ מודל הזיהוי לא נטען (אין רשת?). אפשר לכתוב את סוג המזון בשדה.'); throw e; });
+        }
+        return aiLoading;
+    }
+
     async function toggleCamera() {
         const area = document.getElementById('cameraArea');
         area.style.display = 'block';
+        getModel().catch(() => {});
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
             document.getElementById('video').srcObject = stream;
@@ -743,24 +864,60 @@
         const video = document.getElementById('video');
         if (!video.srcObject) { alert('קודם מפעילים את המצלמה, או מעלים תמונה.'); return; }
         const ctx = document.getElementById('canvas').getContext('2d');
-        ctx.drawImage(video, 0, 0, 200, 200);
+        ctx.drawImage(video, 0, 0, 224, 224);
         processCanvasImage(ctx);
     }
 
     function analyzeUploadedImage(event) {
         const file = event.target.files[0];
         if (!file) return;
+        document.getElementById('cameraArea').style.display = 'block';
         const img = new Image();
         img.onload = () => {
             const ctx = document.getElementById('canvas').getContext('2d');
-            ctx.drawImage(img, 0, 0, 200, 200);
+            ctx.drawImage(img, 0, 0, 224, 224);
             processCanvasImage(ctx);
         };
         img.src = URL.createObjectURL(file);
     }
 
-    function processCanvasImage(ctx) {
-        const d = ctx.getImageData(60, 60, 80, 80).data;
+    async function processCanvasImage(ctx) {
+        const box = document.getElementById('cameraResult');
+        box.style.display = 'block';
+        box.innerHTML = '🤖 מזהה…';
+        let preds = null;
+        try {
+            const m = await getModel();
+            preds = await m.classify(document.getElementById('canvas'), 3);
+        } catch (e) { /* בלי מודל: ממשיכים לניחוש לפי צבע */ }
+        if (preds && preds.length) {
+            const pct = p => Math.round(p.probability * 100) + '%';
+            const top = preds.map(p => `${p.className.split(',')[0]} (${pct(p)})`).join(' · ');
+            for (const p of preds) {
+                const name = p.className.split(',')[0].trim();
+                const low = p.probability < 0.3 ? ' ⚠️ ודאות נמוכה: בדקו שהזיהוי נכון.' : '';
+                if (AI_ANIMALS[name]) {
+                    selectAnimal(AI_ANIMALS[name]);
+                    box.innerHTML = `🤖 <strong>זוהה בעל חיים: ${HE_ANIMAL[AI_ANIMALS[name]]}</strong> (${name}, ${pct(p)}). נבחר בשלב 1. עכשיו צלמו או כתבו את המזון.${low}<br><small>שלוש ההשערות של המודל: ${top}</small>`;
+                    return;
+                }
+                if (AI_FEEDS[name]) {
+                    quickSelect(AI_FEEDS[name]);
+                    box.innerHTML = `🤖 <strong>זוהה: ${name === 'hay' ? 'חציר' : 'תירס'}</strong> (${name}, ${pct(p)}). הנתונים למטה.${low}<br><small>שלוש ההשערות של המודל: ${top}</small>`;
+                    return;
+                }
+                if (AI_FOODS[name]) {
+                    const he = AI_FOODS[name];
+                    showUsdaRow(he);
+                    box.innerHTML = `🤖 <strong>זוהה: ${he}</strong> (${name}, ${pct(p)}). הערך הקלורי מופיע למטה.${low}<br><small>שלוש ההשערות של המודל: ${top}</small>`;
+                    return;
+                }
+            }
+            box.innerHTML = `🤖 המודל לא זיהה מזון או בעל חיים שהאפליקציה מכירה. ההשערות שלו: ${top}.<br>כתבו את סוג המזון בשדה, או נסו לצלם מקרוב יותר.`;
+            return;
+        }
+        // גיבוי: ניחוש לפי הצבע הממוצע במרכז התמונה
+        const d = ctx.getImageData(72, 72, 80, 80).data;
         let r = 0, g = 0, b = 0, n = 0;
         for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
         r = Math.round(r / n); g = Math.round(g / n); b = Math.round(b / n);
@@ -769,8 +926,6 @@
         else if (r > g && (r - b) > 35) { guess = 'צהוב-חום: אולי גרעינים, תערובת מרוכזת או קש'; key = currentAnimal === 'chicken' ? 'תערובת מטילות' : 'גרעיני תירס'; }
         else { guess = 'לא חד-משמעי: אולי תחמיץ'; key = 'תחמיץ'; }
         quickSelect(key);
-        const box = document.getElementById('cameraResult');
-        box.style.display = 'block';
         box.innerHTML = `<span class="color-dot" style="background:rgb(${r},${g},${b})"></span>
             <strong>הצבע הממוצע במרכז התמונה:</strong> ${guess}.<br>
             ⚠️ זה ניחוש לפי צבע בלבד, לא זיהוי של המזון. בדקו ובחרו את המזון הנכון ברשימה.`;
