@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriFeed - איפיון מזון והזנת בעלי חיים בחקלאות</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-light: #60ad5e;
+            --bg: #f4f7f4;
+            --card: #ffffff;
+            --text: #1b3022;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: linear-gradient(135deg, var(--primary), #1b5e20);
+            color: white;
+            padding: 1.2rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        header h1 { margin: 0; font-size: 1.5rem; }
+        header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+        .container {
+            max-width: 800px;
+            margin: 1rem auto;
+            padding: 0 1rem;
+        }
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        h2 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.2rem;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 0.5rem;
+        }
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        input, select, button {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+        input, select { flex: 1; min-width: 180px; }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: var(--primary-light); }
+        button.secondary { background-color: #546e7a; }
+        .chips {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .chip {
+            background: #e8f5e9;
+            color: var(--primary);
+            border: 1px solid #c8e6c9;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .nutrients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 10px;
+            margin-top: 1rem;
+        }
+        .nutrient-box {
+            background: #f9fbf9;
+            border: 1px solid #dcedc8;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .nutrient-box span { display: block; font-size: 0.85rem; color: #555; }
+        .nutrient-box strong { font-size: 1.2rem; color: var(--primary); }
+        #camera-container {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        video {
+            width: 100%;
+            max-width: 360px;
+            border-radius: 10px;
+            border: 3px solid var(--primary);
+        }
+        .rgb-preview {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            vertical-align: middle;
+            border: 1px solid #333;
+            margin-right: 8px;
+        }
+        .status-box {
+            margin-top: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            background: #fff8e1;
+            border-right: 4px solid #ffb300;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🌾 AgriFeed – איפיון מזון והזנת בעלי חיים</h1>
+    <p>מגמת חקלאות ותזונה | שליפת נתוני API ואיפיון אופטי במצלמת הטלפון</p>
+</header>
+
+<div class="container">
+
+    <!-- 1. חיפוש מזון ב-API -->
+    <div class="card">
+        <h2>1. חיפוש ואיפיון מזון (Open Food Facts API)</h2>
+        <p style="font-size: 0.9rem;">חפשו מזון באנגלית/עברית או בחרו דוגמת מספוא להצגת ערכים תזונתיים ל-100 גרם:</p>
+        
+        <div class="input-group">
+            <input type="text" id="foodQuery" placeholder="למשל: Oats, Corn, Soy, Apple...">
+            <button onclick="searchFoodAPI()">🔍 חפש ב-API</button>
+        </div>
+
+        <div class="chips">
+            <span class="chip" onclick="loadPreset('כופתאות קש (Straw Pellets)', 180, 4.5, 32, 1.5, 35)">🌾 כופתאות קש</span>
+            <span class="chip" onclick="loadPreset('חציר אספסת (Alfalfa Hay)', 210, 17.0, 40, 2.2, 28)">🌿 חציר אספסת</span>
+            <span class="chip" onclick="loadPreset('גרעיני תירס (Corn Grain)', 365, 9.4, 74, 4.7, 7.3)">🌽 גרעיני תירס</span>
+            <span class="chip" onclick="loadPreset('כוספת סויה (Soybean Meal)', 330, 44.0, 35, 1.8, 7.0)">🫘 כוספת סויה</span>
+        </div>
+
+        <div id="apiStatus" style="font-size:0.9rem; color:#666;"></div>
+
+        <div id="foodResult" style="display:none;">
+            <h3 id="foodTitle" style="margin-bottom: 5px;"></h3>
+            <div class="nutrients-grid">
+                <div class="nutrient-box"><span>אנרגיה</span><strong id="valKcal">0</strong><small> קק"ל</small></div>
+                <div class="nutrient-box"><span>חלבון</span><strong id="valProtein">0</strong><small> גרם</small></div>
+                <div class="nutrient-box"><span>פחמימות</span><strong id="valCarbs">0</strong><small> גרם</small></div>
+                <div class="nutrient-box"><span>שומן</span><strong id="valFat">0</strong><small> גרם</small></div>
+                <div class="nutrient-box"><span>סיבים תזונתיים</span><strong id="valFiber">0</strong><small> גרם</small></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. בדיקת התאמה לבעל החיים במשק -->
+    <div class="card">
+        <h2>2. התאמה לשלב גידול ובעל חיים (תוכנית הלימודים בחקלאות)</h2>
+        <div class="input-group">
+            <select id="animalSelect" onchange="evaluateAnimalFeed()">
+                <option value="cow">🐄 פרה חולבת (דרישה: חלבון גבוה ~16%-18% ואנרגיה גבוהה)</option>
+                <option value="sheep">🐑 צאן בתחזוקה (דרישה: חלבון בינוני ~10%-12% וסיבים גבוהים)</option>
+                <option value="poultry">🐔 עופות - מטילות/פטם (דרישה: חלבון גבוה ~18%-22% ודל סיבים)</option>
+                <option value="horse">🐎 סוסים בעבודה קלה (דרישה: סיבים גבוהים, חלבון ~10%)</option>
+            </select>
+        </div>
+        <div id="animalEvaluation" class="status-box">
+            בחרו מזון בסעיף 1 כדי לבדוק את התאמתו לבעל החיים הנבחר.
+        </div>
+    </div>
+
+    <!-- 3. יכולת טלפון: מצלמה לאיפיון צבע וטריות מספוא -->
+    <div class="card">
+        <h2>3. איפיון חזותי של המזון במצלמת הטלפון (חיישן מצלמה ו-RGB)</h2>
+        <p style="font-size: 0.9rem;">הפעילו את מצלמת הטלפון וכוונו אותה אל המספוא/המזון. המערכת תדגום את ערכי ה-RGB במרכז הפריים כדי להעריך את מידת הירקרקות (כלורופיל/טריות חציר) לעומת יובש (קש).</p>
+        
+        <div class="input-group">
+            <button onclick="startCamera()">📷 הפעל מצלמת טלפון</button>
+            <button class="secondary" onclick="analyzeFrame()">🎨 דגום ואפיין צבע מזון</button>
+        </div>
+
+        <div id="camera-container">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" width="200" height="200" style="display:none;"></canvas>
+            <div id="colorAnalysisResult" class="status-box" style="margin-top:10px;">
+                כוונו את המצלמה אל המזון ולחצו על "דגום ואפיין צבע מזון".
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let currentFood = { name: '', kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0 };
+
+    // 1. שליפת נתונים מ-Open Food Facts API
+    async function searchFoodAPI() {
+        const query = document.getElementById('foodQuery').value.trim();
+        if (!query) return;
+
+        const statusEl = document.getElementById('apiStatus');
+        statusEl.innerText = 'שולף נתונים מה-API... ⏳';
+
+        try {
+            const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=1`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.products && data.products.length > 0) {
+                const product = data.products[0];
+                const nutriments = product.nutriments || {};
+                const name = product.product_name_he || product.product_name || query;
+                const kcal = Math.round(nutriments['energy-kcal_100g'] || 0);
+                const protein = +(nutriments.proteins_100g || 0).toFixed(1);
+                const carbs = +(nutriments.carbohydrates_100g || 0).toFixed(1);
+                const fat = +(nutriments.fat_100g || 0).toFixed(1);
+                const fiber = +(nutriments.fiber_100g || 0).toFixed(1);
+
+                statusEl.innerText = 'נתונים נשלפו בהצלחה מ-Open Food Facts API ✅';
+                displayFood(name, kcal, protein, carbs, fat, fiber);
+            } else {
+                statusEl.innerText = 'לא נמצא מוצר תואם ב-API. נסו מילה אחרת (למשל Oats או Corn).';
+            }
+        } catch (err) {
+            statusEl.innerText = 'שגיאה בחיבור ל-API. בדקו חיבור לאינטרנט.';
+        }
+    }
+
+    function loadPreset(name, kcal, protein, carbs, fat, fiber) {
+        document.getElementById('apiStatus').innerText = 'נטען ממאגר נתוני מספוא חקלאי ✅';
+        displayFood(name, kcal, protein, carbs, fat, fiber);
+    }
+
+    function displayFood(name, kcal, protein, carbs, fat, fiber) {
+        currentFood = { name, kcal, protein, carbs, fat, fiber };
+        document.getElementById('foodResult').style.display = 'block';
+        document.getElementById('foodTitle').innerText = name;
+        document.getElementById('valKcal').innerText = kcal;
+        document.getElementById('valProtein').innerText = protein;
+        document.getElementById('valCarbs').innerText = carbs;
+        document.getElementById('valFat').innerText = fat;
+        document.getElementById('valFiber').innerText = fiber;
+        evaluateAnimalFeed();
+    }
+
+    // 2. הערכת התאמה לבעלי חיים
+    function evaluateAnimalFeed() {
+        if (!currentFood.name) return;
+        const animal = document.getElementById('animalSelect').value;
+        const evalEl = document.getElementById('animalEvaluation');
+        let message = `<strong>ניתוח עבור ${currentFood.name}:</strong><br>`;
+
+        if (animal === 'cow') {
+            if (currentFood.protein >= 15) {
+                message += '✅ <strong>מתאים כמקור חלבון בונה:</strong> רמת החלבון גבוהה ומתאימה לתמיכה בייצור חלב בבקר.';
+            } else if (currentFood.fiber >= 25) {
+                message += '🌾 <strong>מתאים כמזון גס (תאית):</strong> עשיר בסיבים לתפקוד תקין של הכרס, אך יש להשלים חלבון ואנרגיה במנה.';
+            } else {
+                message += '⚡ <strong>מזון מרוכז/אנרגטי:</strong> מספק פחמימות ואנרגיה, יש לשלב עם מזון גס (חציר/קש) וחלבון.';
+            }
+        } else if (animal === 'poultry') {
+            if (currentFood.fiber > 15) {
+                message += '⚠️ <strong>לא מתאים כמזון עיקרי לעופות:</strong> תכולת הסיבים (תאית) גבוהה מדי למערכת העיכול של העוף.';
+            } else if (currentFood.protein >= 18) {
+                message += '✅ <strong>מקור חלבון מצוין לעופות:</strong> מתאים לתערובת מטילות או פטם.';
+            } else {
+                message += '🌽 <strong>מקור אנרגיה לעופות:</strong> דל בסיבים ומתאים כבסיס אנרגטי בתערובת, דורש תוספת כוספת חלבונית.';
+            }
+        } else {
+            message += `המזון מכיל ${currentFood.protein} גרם חלבון ו-${currentFood.fiber} גרם סיבים ל-100 גרם. יש לאזן את המנה בהתאם למשקל החיה ורמת הפעילות.`;
+        }
+        evalEl.innerHTML = message;
+    }
+
+    // 3. הפעלת מצלמת הטלפון ודגימת RGB (HTML5 Canvas)
+    async function startCamera() {
+        const container = document.getElementById('camera-container');
+        const video = document.getElementById('video');
+        container.style.display = 'block';
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment' }
+            });
+            video.srcObject = stream;
+        } catch (err) {
+            document.getElementById('colorAnalysisResult').innerText =
+                'לא ניתן לגשת למצלמה. ודאו שאישרתם הרשאת מצלמה ושהאתר פתוח ב-HTTPS או ב-localhost.';
+        }
+    }
+
+    function analyzeFrame() {
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        if (!video.srcObject) {
+            alert('יש להפעיל תחילה את המצלמה!');
+            return;
+        }
+
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        // דגימת רשת פיקסלים במרכז התמונה
+        const imgData = ctx.getImageData(75, 75, 50, 50).data;
+        let r = 0, g = 0, b = 0, count = 0;
+
+        for (let i = 0; i < imgData.length; i += 4) {
+            r += imgData[i];
+            g += imgData[i + 1];
+            b += imgData[i + 2];
+            count++;
+        }
+
+        r = Math.round(r / count);
+        g = Math.round(g / count);
+        b = Math.round(b / count);
+
+        // חישוב מדד ירקרקות יחסי (Greenness Index) לאפיון מספוא
+        const greenRatio = ((g / (r + g + b + 1)) * 100).toFixed(1);
+        let qualityText = '';
+        if (g > r && g > b) {
+            qualityText = '🌿 <strong>זוהתה דומיננטיות ירוקה:</strong> מאפיין מספוא ירוק/טרי או חציר עשיר בכלורופיל וויטמינים.';
+        } else if (r > g && g > b) {
+            qualityText = '🌾 <strong>זוהתה דומיננטיות צהובה/חומה:</strong> מאפיין מספוא יבש, כופתאות קש או גרעינים.';
+        } else {
+            qualityText = '🔍 <strong>צבע כללי נדגם:</strong> ניתן להשוות את ערכי ה-RGB לדגימות ביקורת במעבדה.';
+        }
+
+        document.getElementById('colorAnalysisResult').innerHTML = `
+            <div>
+                <span class="rgb-preview" style="background: rgb(${r},${g},${b});"></span>
+                <strong>ערכי RGB שנדגמו:</strong> R: ${r} | G: ${g} | B: ${b} (מדד ירוק: ${greenRatio}%)
+            </div>
+            <div style="margin-top:6px;">${qualityText}</div>
+        `;
+    }
+</script>
+
+</body>
+</html>
