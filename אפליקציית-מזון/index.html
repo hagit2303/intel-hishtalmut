@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מה נותנים לאכול ברפת ובלול?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2457C5;
+            --primary-dark: #13233A;
+            --accent: #D7263D;
+            --bg: #F4F7FA;
+            --card: #ffffff;
+            --text: #13233A; --mut: #5E6E82; --rich: #D7263D; --poor: #2457C5;
+            --border: #DCE3EA;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: Assistant, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: var(--primary-dark);
+            color: white;
+            padding: 1.4rem 1rem;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+        header h1 { margin: 0; font-size: 1.5rem; }
+        header p { margin: 6px 0 0; font-size: 0.95rem; opacity: 0.92; }
+
+        .container {
+            max-width: 900px;
+            margin: 1rem auto;
+            padding: 0 1rem 2rem;
+        }
+
+        /* כרטיסיות ניווט עליונות */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1.2rem;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            background: #EEF3FC;
+            color: var(--primary-dark);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 14px;
+            padding: 1.3rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+            border: 1px solid #DCE3EA;
+        }
+        .step-badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        h2 {
+            margin: 0 0 0.8rem 0;
+            color: var(--primary-dark);
+            font-size: 1.25rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        /* בחירת חיה */
+        .animal-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .animal-card {
+            border: 2px solid #DCE3EA;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            background: #EEF3FC;
+            transition: all 0.2s;
+        }
+        .animal-card .emoji { font-size: 2.2rem; display: block; }
+        .animal-card strong { display: block; margin-top: 4px; font-size: 1.05rem; }
+        .animal-card small { color: #555; font-size: 0.8rem; }
+        .animal-card.selected {
+            border-color: var(--primary);
+            background: #EEF3FC;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(46,125,50,0.15);
+        }
+
+        select, input[type="text"], button {
+            padding: 11px 14px;
+            border-radius: 9px;
+            border: 1px solid #DCE3EA;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        select, input[type="text"] { width: 100%; margin-bottom: 10px; }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover { background: var(--primary-dark); }
+        button.camera-btn { background: #2457C5; }
+        button.camera-btn:hover { background: #13233A; }
+
+        .info-banner {
+            background: #EEF3FC;
+            border-right: 5px solid var(--primary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 0.95rem;
+        }
+        .warning-banner {
+            background: #fff8e1;
+            border-right: 5px solid #D7263D;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        /* כפתורי מזון מהירים */
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin: 10px 0;
+        }
+        .chip {
+            background: #EEF3FC;
+            color: var(--primary-dark);
+            border: 1px solid #DCE3EA;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.88rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .chip:hover { background: #DCE3EA; }
+
+        /* ערכים תזונתיים */
+        .nutrients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .nutrient-box {
+            background: #EEF3FC;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+        .nutrient-box span { display: block; font-size: 0.82rem; color: #555; }
+        .nutrient-box strong { font-size: 1.25rem; color: var(--primary-dark); }
+
+        /* מסלול עיכול */
+        .digestive-path {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .organ-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #EEF3FC;
+            border: 1px solid #DCE3EA;
+            padding: 12px;
+            border-radius: 10px;
+        }
+        .organ-icon {
+            background: var(--primary);
+            color: white;
+            min-width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* מפל האנרגיה - דף חזרה לבגרות */
+        .energy-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .energy-card {
+            background: linear-gradient(to left, #ffffff, #EEF3FC);
+            border: 2px solid #DCE3EA;
+            border-radius: 12px;
+            padding: 14px;
+            position: relative;
+        }
+        .energy-loss {
+            background: #FDF0F2;
+            color: #D7263D;
+            border-right: 4px solid #D7263D;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-right: 25px;
+        }
+
+        /* מצלמה */
+        #cameraArea {
+            display: none;
+            text-align: center;
+            margin-top: 12px;
+            padding: 12px;
+            background: #EEF3FC;
+            border-radius: 12px;
+        }
+        video {
+            width: 100%;
+            max-width: 360px;
+            border-radius: 10px;
+            border: 3px solid var(--primary);
+        }
+        .color-dot {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            vertical-align: middle;
+            border: 2px solid #333;
+            margin-left: 6px;
+        }
+        /* תוספות: סגנון אטלס */
+        button, select, input { font-family: inherit; }
+        header { border-bottom: 5px solid var(--rich); }
+        .feed-head { background: #EEF3FC; padding: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .badge { background: var(--primary-dark); color: #fff; padding: 3px 10px; border-radius: 12px; font-size: 0.82rem; font-weight: 800; }
+        .nutrient-box.kcal { border: 2px solid var(--rich); }
+        .nutrient-box.kcal strong { color: var(--rich); }
+        .source { font-size: 0.85rem; color: var(--mut); margin: 6px 0 10px; }
+        .box-blue { background: #EEF3FC; padding: 14px; border-radius: 10px; border: 1px solid var(--border); border-top: 4px solid var(--poor); }
+        .box-red { background: #FDF0F2; padding: 14px; border-radius: 10px; border: 1px solid var(--border); border-top: 4px solid var(--rich); }
+        table.cmp { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+        table.cmp th { background: var(--primary-dark); color: #fff; padding: 10px; border: 1px solid #ccc; }
+        table.cmp td { padding: 10px; border: 1px solid #ccc; vertical-align: top; }
+        .energy-card.net { border-color: var(--rich); }
+        .upload-btn { background: var(--mut); color: #fff; padding: 10px 14px; border-radius: 9px; cursor: pointer; font-weight: bold; }
+        .foot { font-size: 0.85rem; color: var(--mut); margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🐄 מה נותנים לאכול ברפת ובלול?</h1>
+    <p>סימולטור הזנה ומערכות עיכול: בוחרים בעל חיים, בודקים מזון ורואים את הערך הקלורי ואת מסלול הפירוק</p>
+</header>
+
+<div class="container">
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" id="btnTabSim" onclick="switchTab('sim')">🌾 סימולטור הזנה (רפת / דיר / לול)</button>
+        <button class="tab-btn" id="btnTabBagrut" onclick="switchTab('bagrut')">🎓 דף חזרה: מפל האנרגיה וסוגי מזון</button>
+    </div>
+
+    <!-- טאב 1: סימולטור -->
+    <div id="tabSim">
+
+        <!-- שלב 1: בעל החיים והשלב הפיזיולוגי -->
+        <div class="card">
+            <span class="step-badge">שלב 1 · בוחרים בעל חיים</span>
+            <h2>בחרו את בעל החיים ואת השלב הפיזיולוגי שלו</h2>
+
+            <div class="animal-grid">
+                <div class="animal-card selected" id="card-cow" onclick="selectAnimal('cow')">
+                    <span class="emoji">🐄</span>
+                    <strong>פרה (בקר)</strong>
+                    <small>מעלת גרה · קיבה בת 4 חלקים</small>
+                </div>
+                <div class="animal-card" id="card-sheep" onclick="selectAnimal('sheep')">
+                    <span class="emoji">🐑</span>
+                    <strong>כבשה (צאן)</strong>
+                    <small>מעלת גרה · קיבה בת 4 חלקים</small>
+                </div>
+                <div class="animal-card" id="card-chicken" onclick="selectAnimal('chicken')">
+                    <span class="emoji">🐔</span>
+                    <strong>תרנגולת (עופות)</strong>
+                    <small>זפק, קיבת מיצים וקורקבן</small>
+                </div>
+            </div>
+
+            <label for="stageSelect"><strong>שלב פיזיולוגי / רמת ייצור:</strong></label>
+            <select id="stageSelect" onchange="updateAnimalStageInfo()"></select>
+
+            <div id="animalStageInfo" class="info-banner"></div>
+        </div>
+
+        <!-- שלב 2: המזון -->
+        <div class="card">
+            <span class="step-badge">שלב 2 · בודקים את המזון</span>
+            <h2>מה מושם באבוס? (בוחרים, מקלידים או מצלמים)</h2>
+            <p style="font-size:0.92rem; margin-top:0;">בחרו מזון מהרשימה. אפשר גם להקליד כל מזון אחר: הוא נשלף ממאגר המזון של משרד החקלאות האמריקאי (USDA). במאגר הזה מזונות של בני אדם, והחיפוש עובד בעיקר באנגלית (למשל <strong>oats</strong>, <strong>barley</strong>, <strong>apple</strong>).</p>
+
+            <div class="chips">
+                <span class="chip" onclick="quickSelect('חציר אספסת')">🌿 חציר אספסת (גס)</span>
+                <span class="chip" onclick="quickSelect('תחמיץ')">🌾 תחמיץ (גס, מותסס)</span>
+                <span class="chip" onclick="quickSelect('קש')">🥖 קש (גס, יבש)</span>
+                <span class="chip" onclick="quickSelect('גרעיני תירס')">🌽 גרעיני תירס (מרוכז אנרגטי)</span>
+                <span class="chip" onclick="quickSelect('גרעיני שעורה')">🌾 גרעיני שעורה (מרוכז אנרגטי)</span>
+                <span class="chip" onclick="quickSelect('כוספת סויה')">🫘 כוספת סויה (מרוכז חלבוני)</span>
+                <span class="chip" onclick="quickSelect('תערובת מטילות')">🥚 תערובת מטילות (מרוכז + סידן)</span>
+            </div>
+
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                <input type="text" id="foodInput" placeholder="מזון אחר (באנגלית): oats, wheat bran, apple..." style="flex:1; margin-bottom:0;" onkeydown="if(event.key==='Enter')searchFood()">
+                <button onclick="searchFood()">🔍 בדיקה</button>
+                <button class="camera-btn" onclick="toggleCamera()">📷 צילום המזון</button>
+            </div>
+
+            <div id="cameraArea">
+                <video id="video" autoplay playsinline muted></video>
+                <canvas id="canvas" width="200" height="200" style="display:none;"></canvas>
+                <div style="margin-top:10px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                    <button onclick="analyzeCameraFeed()">📸 צלמו ובדקו את הצבע</button>
+                    <label class="upload-btn">
+                        📁 או העלו תמונה
+                        <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="analyzeUploadedImage(event)">
+                    </label>
+                </div>
+                <div id="cameraResult" class="warning-banner" style="display:none; text-align:right;"></div>
+            </div>
+
+            <div id="loadingText" style="color:var(--primary); font-weight:bold; display:none;">מחפש במאגר USDA… ⏳</div>
+            <div id="searchMsg" class="warning-banner" style="display:none;"></div>
+
+            <div id="foodDetailsBox" style="display:none; margin-top:14px;">
+                <div class="feed-head">
+                    <span id="feedCategoryBadge" class="badge"></span>
+                    <h3 id="feedTitle" style="margin:6px 0 4px 0;"></h3>
+                    <p id="feedExplanation" style="margin:0; font-size:0.95rem;"></p>
+                </div>
+
+                <div class="nutrients-grid">
+                    <div class="nutrient-box kcal"><span id="lblKcal">ערך קלורי</span><strong id="valKcal">0</strong> <small>קק"ל ל-100 ג'</small></div>
+                    <div class="nutrient-box"><span>חלבון</span><strong id="valProtein">0</strong> <small>%</small></div>
+                    <div class="nutrient-box"><span id="lblFiber">סיבים גולמיים</span><strong id="valFiber">0</strong> <small>%</small></div>
+                    <div class="nutrient-box"><span>פחמימות</span><strong id="valCarbs">0</strong> <small>%</small></div>
+                    <div class="nutrient-box"><span>שומן</span><strong id="valFat">0</strong> <small>%</small></div>
+                </div>
+                <p id="valSource" class="source"></p>
+
+                <div id="suitabilityVerdict" class="warning-banner"></div>
+            </div>
+        </div>
+
+        <!-- שלב 3: מסלול העיכול -->
+        <div class="card" id="digestionCard">
+            <span class="step-badge">שלב 3 · מסלול העיכול</span>
+            <h2 id="digestionTitle">מסלול פירוק המזון במערכת העיכול</h2>
+            <p style="font-size:0.92rem; margin-top:0;">איפה מתפרק כל רכיב של המזון שבחרתם, ומה קורה בכל חלק:</p>
+            <div id="digestivePathContainer" class="digestive-path"></div>
+        </div>
+
+    </div>
+
+    <!-- טאב 2: דף חזרה -->
+    <div id="tabBagrut" style="display:none;">
+
+        <div class="card">
+            <h2>⚡ מפל האנרגיה בהזנת בעלי חיים</h2>
+            <p>רק חלק מהאנרגיה שבמזון משמש בסוף לייצור חלב, ביצים או גדילה. בכל שלב יש הפסד אנרגיה:</p>
+
+            <div class="energy-flow">
+                <div class="energy-card">
+                    <strong>1. אנרגיה נאכלת (IE)</strong>
+                    <p style="margin:4px 0 0;">כלל האנרגיה בכמות המזון שבעל החיים אכל בפועל. תכולת האנרגיה של מזון (אנרגיה כללית, GE) נמדדת בשריפה מלאה שלו במד קלוריות (קלורימטר).</p>
+                </div>
+                <div class="energy-loss">⬇️ <strong>הפסד: אנרגיה בצואה</strong> (החלק שלא התעכל, למשל ליגנין וסיבים קשים).</div>
+                <div class="energy-card">
+                    <strong>2. אנרגיה נעכלת (DE)</strong>
+                    <p style="margin:4px 0 0;">אנרגיה נאכלת פחות האנרגיה בצואה. זו האנרגיה שנספגה ממערכת העיכול.</p>
+                </div>
+                <div class="energy-loss">⬇️ <strong>הפסד: אנרגיה בשתן</strong> (אוריאה בבקר וצאן, חומצת שתן בעופות) <strong>ובגזים</strong> (מתאן מהתסיסה בכרס).</div>
+                <div class="energy-card">
+                    <strong>3. אנרגיה מטבולית (ME)</strong>
+                    <p style="margin:4px 0 0;">אנרגיה נעכלת פחות ההפסדים בשתן ובגזים. זו האנרגיה העומדת לרשות תאי הגוף לתהליכי חילוף החומרים.</p>
+                </div>
+                <div class="energy-loss">⬇️ <strong>הפסד: תוספת חום (HI)</strong> · חום שנוצר בגוף בתהליכי העיכול, הלעיסה והתסיסה בכרס. משמעותי במיוחד בפרות בעקת חום בקיץ.</div>
+                <div class="energy-card net">
+                    <strong>4. אנרגיה נטו (NE)</strong>
+                    <p style="margin:4px 0 0;">האנרגיה נטו משמשת לשני צרכים:<br>
+                    🔹 <strong>קיום:</strong> שמירה על חום הגוף, נשימה, פעילות הלב ותנועה בסיסית.<br>
+                    🔹 <strong>ייצור:</strong> חלב, ביצים, גדילה והשמנה, הריון.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🌾 מזון גס לעומת מזון מרוכז</h2>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px;">
+                <div class="box-blue">
+                    <h3 style="margin-top:0;">🌿 מזון גס</h3>
+                    <ul>
+                        <li><strong>מאפיינים:</strong> נפח גדול, עשיר בסיבים (סיבים גולמיים מעל 18% בחומר היבש), דל יחסית באנרגיה.</li>
+                        <li><strong>דוגמאות:</strong> חציר (אספסת, שיבולת שועל), תחמיץ (חיטה, תירס), קש, מרעה.</li>
+                        <li><strong>חשיבות בבקר ובצאן:</strong> מעורר לעיסה והעלאת גרה. הלעיסה מגבירה הפרשת רוק עשיר בביקרבונט, המווסת את החומציות בכרס ומקטין את הסיכון להחמצת כרס (אצידוזיס).</li>
+                    </ul>
+                </div>
+                <div class="box-red">
+                    <h3 style="margin-top:0;">🌽 מזון מרוכז</h3>
+                    <ul>
+                        <li><strong>מאפיינים:</strong> נפח קטן, דל בסיבים, עשיר באנרגיה (עמילן, שומן) או בחלבון.</li>
+                        <li><strong>אנרגטיים:</strong> גרעיני תירס, חיטה, שעורה, סורגום.</li>
+                        <li><strong>חלבוניים:</strong> כוספת סויה, כוספת חמניות, כוספת לפתית.</li>
+                        <li><strong>שימוש:</strong> ייצור אינטנסיבי (שיא תחלובה, הטלה, פיטום). עודף מזון מרוכז בבקר ובצאן עלול לגרום להחמצת כרס.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🐮 השוואת מערכות עיכול</h2>
+            <div style="overflow-x:auto;">
+                <table class="cmp">
+                    <thead>
+                        <tr><th>בעל החיים</th><th>מערכת העיכול</th><th>איפה מתפרקת התאית?</th><th>דגש תזונתי</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>בקר וצאן</strong></td>
+                            <td>מעלי גרה. קיבה בת 4 חלקים: <strong>כרס, קיבת כוסות, קיבת עלים, קיבה אמיתית</strong></td>
+                            <td><strong>בכרס</strong>, בידי חיידקים וחד-תאיים, בתסיסה בתנאים אל-אוויריים.</td>
+                            <td>התסיסה מייצרת חומצות שומן נדיפות (מקור אנרגיה עיקרי) וחלבון מיקרוביאלי. היחס בין מזון גס למרוכז קובע את הסיכון להחמצת כרס.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>תרנגולת</strong></td>
+                            <td>מקור, <strong>זפק</strong>, קיבת מיצים (קיבה בלוטית), <strong>קורקבן</strong>, מעי דק, שני מעיים עיוורים</td>
+                            <td>פירוק מועט מאוד, בעיקר במעיים העיוורים.</td>
+                            <td>אין שיניים: הזפק אוגר ומרכך, והקורקבן (קיבת שרירים) טוחן את הגרעינים. ניזונה ממזון מרוכז דל בסיבים.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size:0.9rem; color:var(--mut); margin-bottom:0;">להשוואה בלבד: בסוס, שאינו מעלה גרה, התאית מותססת במעי העיוור ובמעי הגס, כלומר אחרי המעי הדק.</p>
+        </div>
+
+    </div>
+
+    <footer class="foot">
+        נתוני המזונות ברשימה: ערכים טיפוסיים לחומר יבש, מעוגלים (טבלאות הרכב מזונות). מזון מוקלד: <a href="https://fdc.nal.usda.gov/" target="_blank" rel="noopener">USDA FoodData Central</a> (מפתח הדגמה ציבורי, מוגבל במספר בקשות לשעה).<br>
+        גרסה ראשונה נבנתה ב-Gemini · נבדקה ותוקנה לדיוק מדעי · השתלמות אינטל · חגית ברגמן
+    </footer>
+</div>
+
+<script>
+    // בעלי החיים והשלבים הפיזיולוגיים
+    const animalsData = {
+        cow: {
+            name: 'פרה', ruminant: true,
+            stages: [
+                { id: 'high_milk', producing: true, title: 'פרה בשיא תחלובה (אחרי המלטה, 45–50 ליטר חלב ביום)',
+                  needs: 'דרישה גבוהה מאוד לאנרגיה ולחלבון (כ-16%–18% חלבון במנה), ועם זאת לפחות כ-35%–40% מזון גס בחומר היבש.',
+                  why: 'ייצור חלב רב מעלה את צריכת האנרגיה, ולעיתים הפרה נמצאת במאזן אנרגיה שלילי. לכן המנה (בליל, TMR) כוללת מזון מרוכז (תירס, סויה) לצד תחמיץ וחציר. המזון הגס נחוץ לתפקוד תקין של הכרס.' },
+                { id: 'dry_cow', producing: false, title: 'פרה יבשה (כחודשיים לפני ההמלטה, אינה נחלבת)',
+                  needs: 'דרישה מתונה לאנרגיה ולחלבון (כ-12% חלבון). המנה מבוססת בעיקר על מזון גס (קש, חציר, תחמיץ).',
+                  why: 'בתקופה זו העטין מתחדש לקראת התחלובה הבאה. עודף אנרגיה בשלב זה גורם להשמנת יתר, הקשורה להמלטה קשה ולמחלות מטבוליות סביב ההמלטה (כמו קטוזיס).' },
+                { id: 'calf', producing: true, title: 'עגלה בגדילה',
+                  needs: 'חלבון איכותי (כ-16%–18%) ואנרגיה זמינה, לצד חציר איכותי.',
+                  why: 'אצל העגלה הצעירה הכרס עדיין מתפתחת. תוצרי התסיסה של תערובת מרוכזת (סטרטר) מעודדים את התפתחות הפטמות בדופן הכרס, והחציר מפתח את נפח הכרס.' }
+            ]
+        },
+        sheep: {
+            name: 'כבשה', ruminant: true,
+            stages: [
+                { id: 'ewe_lactating', producing: true, title: 'כבשה מניקה / חולבת (אחרי המלטה)',
+                  needs: 'דרישה גבוהה לאנרגיה ולחלבון (כ-15%–16% חלבון במנה), לצד מזון גס איכותי.',
+                  why: 'ייצור החלב מעלה את צריכת האנרגיה והחלבון. מנה של מזון גס בלבד אינה מספקת אותן, ולכן מוסיפים מזון מרוכז (שעורה, כוספת סויה).' },
+                { id: 'ewe_dry', producing: false, title: 'כבשה יבשה (בין תחלובות)',
+                  needs: 'דרישה נמוכה. מנה המבוססת על מרעה, חציר או קש.',
+                  why: 'בשלב זה אין ייצור חלב, ועודף אנרגיה גורם להשמנה.' },
+                { id: 'lamb', producing: true, title: 'טלה בפיטום',
+                  needs: 'מנה עתירת אנרגיה וחלבון (כ-16% חלבון), בעיקר מזון מרוכז, עם מעט מזון גס.',
+                  why: 'קצב גדילה מהיר דורש אנרגיה וחלבון רבים. מעט מזון גס נחוץ לתפקוד תקין של הכרס.' }
+            ]
+        },
+        chicken: {
+            name: 'תרנגולת', ruminant: false,
+            stages: [
+                { id: 'layer', producing: true, title: 'תרנגולת מטילה',
+                  needs: 'מזון מרוכז דל בסיבים, עשיר באנרגיה, חלבון (כ-16%–18%) ורמה גבוהה של סידן (כ-4% מהמנה: גיר, צדפים).',
+                  why: 'יכולת התרנגולת לפרק תאית מועטה מאוד. קליפת הביצה בנויה בעיקר מסידן פחמתי, ולכן המטילה צורכת כמות גדולה של סידן בכל יום, לצד חלבון ואנרגיה לבניית החלבון והחלמון.' },
+                { id: 'broiler', producing: true, title: 'עוף פטם בגדילה מהירה',
+                  needs: 'מזון מרוכז עתיר חלבון (כ-20%–23%, למשל כוספת סויה) ואנרגיה (תירס, חיטה, שמן).',
+                  why: 'קצב גדילה מהיר דורש חומצות אמינו לבניית שריר ואנרגיה מטבולית גבוהה, בנפח מזון קטן.' }
+            ]
+        }
+    };
+
+    // מזונות נפוצים במשק · ערכים טיפוסיים מעוגלים לחומר יבש
+    // ערך קלורי = אנרגיה מטבולית משוערת (לבקר וצאן; בתערובת מטילות: לעופות)
+    const feeds = {
+        'חציר אספסת': { category: 'מזון גס · קטנית',
+            explanation: 'מזון גס מצמח ממשפחת הקטניות. בהשוואה לחציר דגניים ולקש, עשיר יותר בחלבון ובסידן.',
+            v: { kcal: 215, protein: 17.5, fiber: 28, carbs: 40, fat: 2.2 } },
+        'תחמיץ': { category: 'מזון גס · מותסס',
+            explanation: 'צמח שלם (חיטה או תירס) שנקצר ירוק ולח ונאטם בבור תחמיץ ללא חמצן. חיידקי חומצה לקטית מתסיסים את הסוכרים, והחומציות שנוצרת מעכבת ריקבון ומשמרת את המזון חודשים.',
+            v: { kcal: 250, protein: 8.5, fiber: 24, carbs: 52, fat: 3.1 } },
+        'קש': { category: 'מזון גס · יבש',
+            explanation: 'גבעולים יבשים של דגניים (חיטה, שעורה) אחרי קציר הגרעינים. דל מאוד בחלבון ובאנרגיה, עשיר מאוד בתאית ובליגנין.',
+            v: { kcal: 165, protein: 4, fiber: 40, carbs: 38, fat: 1.5 } },
+        'גרעיני תירס': { category: 'מזון מרוכז · אנרגטי',
+            explanation: 'מקור אנרגיה מרכזי במנות של בקר ועופות. עשיר בעמילן (רב-סוכר) ודל בסיבים.',
+            v: { kcal: 325, protein: 9.4, fiber: 2.5, carbs: 72, fat: 4 } },
+        'גרעיני שעורה': { category: 'מזון מרוכז · אנרגטי',
+            explanation: 'גרעין דגן עשיר בעמילן, מקור אנרגיה נפוץ במנות של צאן ובקר. מכיל יותר סיבים מתירס, בגלל המוץ העוטף את הגרעין.',
+            v: { kcal: 300, protein: 11.5, fiber: 5, carbs: 60, fat: 2 } },
+        'כוספת סויה': { category: 'מזון מרוכז · חלבוני',
+            explanation: 'מה שנשאר מפולי הסויה אחרי הפקת השמן. מקור חלבון עיקרי במשק (כ-44%–48% חלבון).',
+            v: { kcal: 305, protein: 46, fiber: 6.5, carbs: 32, fat: 1.9 } },
+        'תערובת מטילות': { category: 'מזון מרוכז · לעופות, עם סידן',
+            explanation: 'תערובת של גרעינים טחונים (תירס, חיטה), כוספת סויה, ויטמינים וכמות גבוהה של גיר (סידן) לבניית קליפת הביצה. דלה מאוד בסיבים.',
+            v: { kcal: 285, protein: 17.5, fiber: 3.8, carbs: 56, fat: 4.2 } }
+    };
+
+    const aliases = [
+        [['אספסת', 'חציר', 'מרעה'], 'חציר אספסת'],
+        [['תחמיץ'], 'תחמיץ'],
+        [['קש', 'כופתאות'], 'קש'],
+        [['תירס'], 'גרעיני תירס'],
+        [['שעורה'], 'גרעיני שעורה'],
+        [['סויה', 'כוספת'], 'כוספת סויה'],
+        [['מטילות', 'תערובת'], 'תערובת מטילות']
+    ];
+
+    let currentAnimal = 'cow';
+    let currentStage = 'high_milk';
+    let currentFeed = null;
+    const stageObj = () => animalsData[currentAnimal].stages.find(s => s.id === currentStage);
+
+    window.onload = function () {
+        selectAnimal('cow');
+        quickSelect('חציר אספסת');
+    };
+
+    function switchTab(tab) {
+        document.getElementById('tabSim').style.display = (tab === 'sim') ? 'block' : 'none';
+        document.getElementById('tabBagrut').style.display = (tab === 'bagrut') ? 'block' : 'none';
+        document.getElementById('btnTabSim').classList.toggle('active', tab === 'sim');
+        document.getElementById('btnTabBagrut').classList.toggle('active', tab === 'bagrut');
+    }
+
+    function selectAnimal(key) {
+        currentAnimal = key;
+        ['cow', 'sheep', 'chicken'].forEach(k => document.getElementById('card-' + k).classList.toggle('selected', k === key));
+        const sel = document.getElementById('stageSelect');
+        sel.innerHTML = '';
+        animalsData[key].stages.forEach(st => {
+            const o = document.createElement('option');
+            o.value = st.id; o.innerText = st.title; sel.appendChild(o);
+        });
+        updateAnimalStageInfo();
+    }
+
+    function updateAnimalStageInfo() {
+        currentStage = document.getElementById('stageSelect').value;
+        const s = stageObj();
+        document.getElementById('animalStageInfo').innerHTML =
+            `<strong>🎯 הדרישות בשלב זה:</strong> ${s.needs}<br><strong>💡 הסבר:</strong> ${s.why}`;
+        if (currentFeed) renderEvaluationAndDigestion();
+    }
+
+    function quickSelect(name) {
+        document.getElementById('foodInput').value = '';
+        showFeed({ title: name, ...feeds[name], ...feeds[name].v, source: 'list' });
+    }
+
+    function showMsg(html) {
+        const m = document.getElementById('searchMsg');
+        m.style.display = html ? 'block' : 'none';
+        m.innerHTML = html || '';
+    }
+
+    // חיפוש: מזון מהרשימה, או שליפה מ-USDA FoodData Central
+    async function searchFood() {
+        const raw = document.getElementById('foodInput').value.trim();
+        if (!raw) return;
+        showMsg('');
+        for (const [words, key] of aliases) {
+            if (words.some(w => raw.includes(w))) return quickSelect(key);
+        }
+        document.getElementById('loadingText').style.display = 'block';
+        try {
+            const url = `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(raw)}&pageSize=1&dataType=Foundation,SR%20Legacy&api_key=DEMO_KEY`;
+            const res = await fetch(url);
+            if (res.status === 429) throw new Error('limit');
+            if (!res.ok) throw new Error('http');
+            const data = await res.json();
+            const f = (data.foods || [])[0];
+            if (!f) {
+                showMsg(`לא נמצא "${raw}" במאגר. נסו לכתוב באנגלית (למשל oats, wheat, apple).`);
+                return;
+            }
+            const get = (...ids) => {
+                for (const id of ids) {
+                    const n = (f.foodNutrients || []).find(x => x.nutrientId === id);
+                    if (n && n.value != null) return Math.round(n.value * 10) / 10;
+                }
+                return 0;
+            };
+            showFeed({
+                title: `${raw} → ${f.description}`,
+                category: 'מזון מהמאגר האמריקאי (USDA)',
+                explanation: 'נתונים ממאגר מזון לבני אדם, ל-100 גרם מזון כפי שהוא (כולל המים), ולא לחומר יבש. הערך הקלורי במאגר הוא האנרגיה הזמינה לאדם.',
+                kcal: get(1008, 2047, 2048), protein: get(1003), fiber: get(1079), carbs: get(1005), fat: get(1004),
+                source: 'usda'
+            });
+        } catch (e) {
+            showMsg(e.message === 'limit'
+                ? 'המאגר חסם זמנית: נשלחו יותר מדי בקשות בשעה האחרונה. נסו שוב מאוחר יותר, או בחרו מזון מהרשימה.'
+                : 'אין חיבור למאגר USDA (אין רשת?). אפשר לבחור מזון מהרשימה, שעובדת גם בלי אינטרנט.');
+        } finally {
+            document.getElementById('loadingText').style.display = 'none';
+        }
+    }
+
+    function showFeed(feed) {
+        currentFeed = feed;
+        document.getElementById('foodDetailsBox').style.display = 'block';
+        document.getElementById('feedCategoryBadge').innerText = feed.category;
+        document.getElementById('feedTitle').innerText = feed.title;
+        document.getElementById('feedExplanation').innerText = feed.explanation;
+        ['Kcal', 'Protein', 'Fiber', 'Carbs', 'Fat'].forEach(k => {
+            document.getElementById('val' + k).innerText = feed[k.toLowerCase()];
+        });
+        const usda = feed.source === 'usda';
+        document.getElementById('lblKcal').innerText = usda ? 'ערך קלורי (לאדם)' : 'ערך קלורי (אנרגיה מטבולית)';
+        document.getElementById('lblFiber').innerText = usda ? 'סיבים תזונתיים' : 'סיבים גולמיים';
+        document.getElementById('valSource').innerHTML = usda
+            ? '📡 מקור: USDA FoodData Central, נתונים חיים. ל-100 גרם מזון כפי שהוא.'
+            : '📋 מקור: ערכים טיפוסיים מעוגלים, ל-100 גרם חומר יבש. הערך הקלורי הוא אנרגיה מטבולית משוערת (בבקר וצאן; בתערובת מטילות: בעופות).';
+        renderEvaluationAndDigestion();
+    }
+
+    // התאמה לבעל החיים + מסלול העיכול
+    function renderEvaluationAndDigestion() {
+        const verdictEl = document.getElementById('suitabilityVerdict');
+        const pathEl = document.getElementById('digestivePathContainer');
+        const digTitle = document.getElementById('digestionTitle');
+        const f = currentFeed, a = animalsData[currentAnimal], s = stageObj();
+        const isRoughage = f.fiber >= 18;
+        let verdict = '', steps = [];
+
+        if (a.ruminant) {
+            digTitle.innerText = `${currentAnimal === 'cow' ? '🐄' : '🐑'} מסלול הפירוק של "${f.title}" במערכת העיכול של ה${a.name} (מעלת גרה)`;
+            if (isRoughage) {
+                verdict = `✅ <strong>מזון גס, מתאים ל${a.name}.</strong> מכיל ${f.fiber}% סיבים. הסיבים מעוררים לעיסה, העלאת גרה והפרשת רוק עשיר בביקרבונט, המווסת את החומציות בכרס (pH של כ-6.5). ` +
+                    (s.producing ? `בשלב זה מזון גס לבדו אינו מספק את האנרגיה והחלבון הנדרשים, ולכן מוסיפים מזון מרוכז.` : `מתאים כבסיס למנה בשלב זה.`);
+            } else {
+                verdict = `⚡ <strong>מזון מרוכז:</strong> עשיר באנרגיה או בחלבון ודל בסיבים (${f.fiber}%). ` +
+                    (s.producing ? `מתאים כתוספת בשלב זה, אבל רק לצד מזון גס: מנה דלה בסיבים מגבירה את הסיכון להחמצת כרס (אצידוזיס).` : `בשלב זה מגבילים מזון מרוכז, כי עודף אנרגיה גורם להשמנת יתר.`);
+            }
+            steps = [
+                { organ: '1. פה: לעיסה ראשונית ובליעה', desc: 'המזון נלעס לעיסה קצרה ונבלע. הרוק עשיר בביקרבונט, המווסת את החומציות בכרס.' },
+                { organ: '2. כרס וקיבת כוסות: תסיסה בידי מיקרואורגניזמים', desc: isRoughage
+                    ? `חיידקים וחד-תאיים בכרס מפרקים את <strong>התאית (${f.fiber}%)</strong> בעזרת האנזים צלולז, שבעל החיים עצמו אינו מייצר. תוצרי התסיסה הם <strong>חומצות שומן נדיפות</strong>, הנספגות דרך דופן הכרס לדם ומשמשות מקור אנרגיה עיקרי. חלקיקים גסים עולים מהכרס דרך הוושט לפה (<strong>העלאת גרה</strong>), נלעסים שוב ונבלעים חזרה לכרס. קיבת הכוסות ממיינת: חלקיקים קטנים ממשיכים לקיבת העלים, וחלקיקים גדולים חוזרים לכרס.`
+                    : `העמילן והסוכרים (${f.carbs}%) מותססים מהר בכרס לחומצות שומן נדיפות. תסיסה מהירה מורידה את ה-pH בכרס. חלק מהחלבון (${f.protein}%) מפורק בידי החיידקים, והם משתמשים בתוצרים לבניית <strong>חלבון מיקרוביאלי</strong> בתאיהם.` },
+                { organ: '3. קיבת עלים (המסס)', desc: 'ספיגת מים ומלחים מהתוכן, לפני המעבר לקיבה האמיתית.' },
+                { organ: '4. קיבה אמיתית (קיבת המיצים) ומעי דק', desc: 'בקיבה האמיתית מופרשות חומצה מלחית ופפסין, ומתחיל עיכול החלבונים, כולל חלבון החיידקים שהגיעו מהכרס. במעי הדק נספגים לדם חומצות אמינו, שומנים ומעט גלוקוז.' }
+            ];
+        } else {
+            digTitle.innerText = `🐔 מסלול הפירוק של "${f.title}" במערכת העיכול של התרנגולת`;
+            if (isRoughage) {
+                verdict = `❌ <strong>לא מתאים כמזון עיקרי לתרנגולת.</strong> המזון עשיר בסיבים (${f.fiber}%). לתרנגולת אין כרס ויכולתה לפרק תאית מועטה מאוד, ולכן האנרגיה הנעכלת ממזון כזה נמוכה מאוד.`;
+            } else {
+                verdict = `✅ <strong>מתאים לתרנגולת.</strong> מזון מרוכז דל בסיבים (${f.fiber}%), עם ערך קלורי של ${f.kcal} קק"ל ל-100 ג' ו-${f.protein}% חלבון. ` +
+                    (currentStage === 'layer' ? 'למטילה חשוב שהמנה תכלול גם סידן (גיר) לבניית קליפת הביצה.' : 'מתאים לגדילה מהירה של פטם, בתנאי שתכולת החלבון גבוהה.');
+            }
+            steps = [
+                { organ: '1. מקור וזפק', desc: 'לתרנגולת אין שיניים. המזון נבלע שלם ונאגר ב<strong>זפק</strong> (הרחבה של הוושט), שם הוא נרטב ומתרכך.' },
+                { organ: '2. קיבת מיצים (קיבה בלוטית)', desc: `מופרשות חומצה מלחית ופפסין, ומתחיל הפירוק הכימי של <strong>החלבונים (${f.protein}%)</strong>.` },
+                { organ: '3. קורקבן (קיבת שרירים)', desc: 'שרירים חזקים טוחנים את הגרעינים. אבנים קטנות שהתרנגולת בלעה (חצץ) מגבירות את הטחינה. מכאן עובר המזון למעי הדק.' },
+                { organ: '4. מעי דק ומעיים עיוורים', desc: isRoughage
+                    ? `במעי הדק אין אנזימים המפרקים תאית. פירוק מועט של סיבים מתרחש בשני המעיים העיוורים, ורוב הסיבים (${f.fiber}%) מופרשים בלשלשת. אנרגיה רבה בצואה = אנרגיה נעכלת נמוכה.`
+                    : `במעי הדק מתפרקים העמילן (${f.carbs}%), השומן והחלבונים, ותוצרי הפירוק נספגים ביעילות גבוהה לדם.` }
+            ];
+        }
+
+        verdictEl.innerHTML = verdict;
+        pathEl.innerHTML = steps.map(x => `
+            <div class="organ-step">
+                <div class="organ-icon">✓</div>
+                <div><strong>${x.organ}</strong><div style="font-size:0.93rem; margin-top:2px;">${x.desc}</div></div>
+            </div>`).join('');
+    }
+
+    // מצלמת הטלפון: בדיקת הצבע הממוצע במרכז התמונה (ניחוש בלבד, לא זיהוי)
+    async function toggleCamera() {
+        const area = document.getElementById('cameraArea');
+        area.style.display = 'block';
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            document.getElementById('video').srcObject = stream;
+        } catch (err) {
+            const r = document.getElementById('cameraResult');
+            r.style.display = 'block';
+            r.innerHTML = '💡 אין גישה למצלמה. אפשר לצלם או לבחור תמונה בכפתור "או העלו תמונה".';
+        }
+    }
+
+    function analyzeCameraFeed() {
+        const video = document.getElementById('video');
+        if (!video.srcObject) { alert('קודם מפעילים את המצלמה, או מעלים תמונה.'); return; }
+        const ctx = document.getElementById('canvas').getContext('2d');
+        ctx.drawImage(video, 0, 0, 200, 200);
+        processCanvasImage(ctx);
+    }
+
+    function analyzeUploadedImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const img = new Image();
+        img.onload = () => {
+            const ctx = document.getElementById('canvas').getContext('2d');
+            ctx.drawImage(img, 0, 0, 200, 200);
+            processCanvasImage(ctx);
+        };
+        img.src = URL.createObjectURL(file);
+    }
+
+    function processCanvasImage(ctx) {
+        const d = ctx.getImageData(60, 60, 80, 80).data;
+        let r = 0, g = 0, b = 0, n = 0;
+        for (let i = 0; i < d.length; i += 4) { r += d[i]; g += d[i + 1]; b += d[i + 2]; n++; }
+        r = Math.round(r / n); g = Math.round(g / n); b = Math.round(b / n);
+        let guess, key;
+        if (g >= r && g > b) { guess = 'ירקרק: אולי מזון גס ירוק, כמו חציר אספסת'; key = 'חציר אספסת'; }
+        else if (r > g && (r - b) > 35) { guess = 'צהוב-חום: אולי גרעינים, תערובת מרוכזת או קש'; key = currentAnimal === 'chicken' ? 'תערובת מטילות' : 'גרעיני תירס'; }
+        else { guess = 'לא חד-משמעי: אולי תחמיץ'; key = 'תחמיץ'; }
+        quickSelect(key);
+        const box = document.getElementById('cameraResult');
+        box.style.display = 'block';
+        box.innerHTML = `<span class="color-dot" style="background:rgb(${r},${g},${b})"></span>
+            <strong>הצבע הממוצע במרכז התמונה:</strong> ${guess}.<br>
+            ⚠️ זה ניחוש לפי צבע בלבד, לא זיהוי של המזון. בדקו ובחרו את המזון הנכון ברשימה.`;
+    }
+</script>
+
+</body>
+</html>
