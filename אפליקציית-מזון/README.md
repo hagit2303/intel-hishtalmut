@@ -1,6 +1,7 @@
 # אפליקציית מזון · מה נותנים לאכול ברפת ובלול?
 
-**קישור:** https://hagit2303.github.io/intel-hishtalmut/food/ · הקוד: [index.html](index.html)
+**קישור:** https://hagit2303.github.io/intel-hishtalmut/food/ · הקוד: [index.html](index.html) · **אפיון:** [docs/spec.md](docs/spec.md)
+**לתלמידים:** סימולציה ביחידת סוגי מזונות: https://hagit2303.github.io/haklaut/unit3-feeds/food-sim.html (נוצרת מהאפליקציה בעזרת `scripts/food-to-haklaut.sh`)
 
 נבנתה ב-Gemini (23–24.10), ונבדקה ותוקנה ב-2.11. מתאימה גם למשימה 1 (API) וגם למשימה 2 (מצלמת הטלפון).
 
