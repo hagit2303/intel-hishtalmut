@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מהמטלה לכיתה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F4F7FA;--ink:#13233A;--mut:#5E6E82;--rich:#D7263D;--poor:#2457C5;--card:#FFFFFF;--line:#DCE3EA}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Assistant,Arial,sans-serif;font-size:18px;line-height:1.55}
+main{max-width:860px;margin:0 auto;padding:28px 16px 56px}
+.eyebrow{color:var(--rich);font-weight:800;font-size:14px}
+h1{font-size:clamp(32px,7vw,52px);font-weight:800;line-height:1.1;margin:4px 0 10px}
+h2{font-size:26px;font-weight:800;margin:36px 0 12px}
+.lead{color:var(--mut);margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+table{width:100%;border-collapse:collapse;font-size:16px}
+th{background:var(--ink);color:#fff;padding:10px;text-align:right}
+td{border-bottom:1px solid var(--line);padding:10px;vertical-align:top}
+td:first-child{font-weight:800;white-space:nowrap}
+.flow{display:grid;gap:10px}
+.step{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.num{flex:0 0 38px;height:38px;border-radius:50%;background:var(--poor);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.step.red .num{background:var(--rich)}
+.step b{display:block;font-size:19px}
+.step span{color:var(--mut);font-size:16px}
+ul{padding-right:20px;margin:6px 0}
+li{margin:4px 0}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.btns a{background:var(--ink);color:#fff;text-decoration:none;padding:10px 16px;border-radius:10px;font-weight:600}
+.btns a.alt{background:#fff;color:var(--ink);border:1px solid var(--ink)}
+.quote{border-right:5px solid var(--rich);padding:6px 14px;background:#FDF0F2;border-radius:8px;font-weight:600}
+footer{font-size:14px;color:var(--mut);margin-top:32px}
+@media (max-width:520px){td:first-child{white-space:normal}}
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">השתלמות אינטל · משימות מ-20.10 · חגית ברגמן</div>
+  <h1>מהמטלה לכיתה</h1>
+  <p class="lead">איך אפליקציית "מה נותנים לאכול ברפת ובלול?" עונה על המטלה של אבי, ומתחברת ליחידות הלימוד בחקלאות.</p>
+  <div class="btns">
+    <a href="../food/">🐄 לאפליקציה</a>
+    <a class="alt" href="https://hagit2303.github.io/haklaut/unit2-digestion/">🫃 יחידת מערכת העיכול</a>
+    <a class="alt" href="../">🏠 כל המשימות</a>
+  </div>
+
+  <h2>המטלה, ומה נבנה</h2>
+  <div class="card" style="padding:0;overflow-x:auto">
+    <table>
+      <thead><tr><th>מה אבי ביקש</th><th>מה יש באפליקציה</th></tr></thead>
+      <tbody>
+        <tr><td>1 · אתר עם API</td><td>נתוני מזון ממאגר <b>USDA FoodData Central</b> של משרד החקלאות האמריקאי: ערך קלורי, חלבון, סיבים, פחמימות ושומן. אפשר לכתוב את סוג המזון בעברית.</td></tr>
+        <tr><td>2 · יכולת של הטלפון</td><td><b>מצלמה + מודל בינה מלאכותית</b> (MobileNet) שרץ בתוך הטלפון: מצלמים בננה, חציר, תירס או פרה, והאפליקציה מזהה ומביאה את הנתונים. התמונה לא נשלחת לשום מקום.</td></tr>
+        <tr><td>3 · מתוצר למערכת</td><td>האפליקציה מחוברת לתוכנית הלימודים: <b>פרה, כבשה, סוס ותרנגולת</b>, מסלול העיכול של כל אחד, השוואת פרה מול סוס (בגרויות 2017 ו-2022), וקישורים ליחידות הקורס.</td></tr>
+        <tr><td>אפיון</td><td>האפיון של המערכת הבאה, "עונים כאן", נכתב בשיטה מהמפגש: מטרה, משתמשים, חמש זוויות, דרישות ממוספרות.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>איך זה נבנה: Co-Coding ולא Vibe Coding</h2>
+  <p class="lead">במצפן של אבי יש שלוש דרגות עבודה עם בינה. האפליקציה עברה את כולן:</p>
+  <div class="flow">
+    <div class="step"><div class="num">1</div><div><b>Vibe Coding · טיוטה ב-Gemini (23–24.10)</b><span>שלוש גרסאות מרשימות במראה, תוך דקות. בבדיקה נמצאו בהן טעויות שרק מי שמכיר את התחום מזהה.</span></div></div>
+    <div class="step red"><div class="num">2</div><div><b>בדיקת מומחית · מה נמצא</b><span>
+      <ul>
+        <li>המאגר חיפש מזונות לא נכונים: סובין שיבולת שועל במקום קש, נבטי אספסת במקום חציר.</li>
+        <li>למזון לא מוכר הוצגו ערכים מומצאים, בלי לציין זאת.</li>
+        <li>"זיהוי" בצילום היה ניחוש לפי צבע בלבד.</li>
+        <li>מונחים: "בית הכוסות", "קיבת העלעלים" במקום כרס, קיבת כוסות, קיבת עלים, קיבה אמיתית.</li>
+        <li>ערבוב בין אנרגיה כללית לאנרגיה נאכלת, ובין סיבים תזונתיים לסיבים גולמיים.</li>
+        <li>ניסוחים טלאולוגיים ומוגזמים ("הקסם", "אפסית").</li>
+      </ul></span></div></div>
+    <div class="step"><div class="num">3</div><div><b>Co-Coding · Claude כשותף, חגית מחליטה</b><span>תוכנית קודם, בנייה בשלבים, בדיקה בדפדפן אחרי כל שלב. ההחלטות התחומיות של חגית: ארבעה בעלי חיים, הסוס כהשוואה לפרה, רק לפי תוכנית הלימודים, מונחים כמו ביחידה.</span></div></div>
+    <div class="step red"><div class="num">4</div><div><b>בעיה אמיתית שהתגלתה בבדיקה</b><span>למפתח ההדגמה של USDA יש מגבלה של כ-30 בקשות בשעה. כיתה שלמה על אותה רשת עוברת אותה תוך דקות. הפתרון: נתוני כ-65 מזונות נשמרו בתוך האפליקציה מקובץ הנתונים הרשמי של USDA, וה-API משמש למזונות אחרים.</span></div></div>
+    <div class="step"><div class="num">5</div><div><b>חיבור לכיתה</b><span>קישורים מהאפליקציה ליחידות מערכת העיכול וסוגי מזונות, והשוואת פרה מול סוס גם ביחידה עצמה.</span></div></div>
+  </div>
+
+  <h2>מה למדתי</h2>
+  <div class="card">
+    <p class="quote">"AI מרים את הרצפה, אבל הלמידה היא עדיין הדרך לפסגה" (אבי סלמון)</p>
+    <ul>
+      <li><b>מרשים ≠ נכון.</b> הטיוטה נראתה מוכנה, והטעויות היו בדיוק במקומות שבהם נדרשת מומחיות בתחום. האדם בלולאה (Human in the Loop) הוא המומחה התחומי.</li>
+      <li><b>API אמיתי = מגבלות אמיתיות.</b> מגבלת בקשות, חיפוש באנגלית, מאגר של מזון לבני אדם ולא של מזון לבעלי חיים. צריך לדעת מה השירות נותן ומה לא.</li>
+      <li><b>פרטיות.</b> מודל שרץ בתוך הטלפון מאפשר זיהוי תמונה בלי לשלוח תמונות של תלמידים לשרת חיצוני.</li>
+      <li><b>תוכנית הלימודים קובעת.</b> הסוס נכנס כי הוא מופיע בבגרות כהשוואה לפרה, ובהיקף הזה בלבד.</li>
+    </ul>
+  </div>
+
+  <h2>בכיתה</h2>
+  <div class="card">
+    <ul>
+      <li><b>בסיור ברפת או בלול:</b> התלמידים מצלמים את המזון באבוס, ובודקים אם הוא מתאים לבעל החיים ולשלב הפיזיולוגי.</li>
+      <li><b>בשיעור על מערכת העיכול:</b> בוחרים אותו מזון לפרה ולסוס, ומשווים איפה מתפרקת התאית.</li>
+      <li><b>בשיעור על אנרגיה:</b> משווים ערך קלורי של מזון גס ומזון מרוכז, ומקשרים למפל האנרגיה.</li>
+      <li><b>חשיבה ביקורתית:</b> מבקשים מהתלמידים למצוא מתי הזיהוי בתמונה טועה, ולמה.</li>
+    </ul>
+  </div>
+
+  <footer>מקורות: USDA FoodData Central (SR Legacy) · MobileNet (TensorFlow.js) · תוכנית הלימודים ובגרויות במדעי החקלאות 2017, 2022 · מצפן למדיניות חינוך לבינה מלאכותית (סלמון, וקסמן, בנטור, איזנברג).</footer>
+</main>
+</body>
+</html>
